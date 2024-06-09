@@ -1,5 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { ChevronDoubleDownIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
 export default function Header() {
