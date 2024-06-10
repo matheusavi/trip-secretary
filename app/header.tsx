@@ -20,9 +20,7 @@ export default function Header() {
                     <UserCircleIcon className="h-10 flex-shrink-0 dark:drop-shadow-[0_0_0.3rem_#ffffff70]" />
                     <ChevronDownIcon className="flex-shrink-0 h-5" />
                 </div>
-
             </div>
-            <line></line>
         </header>
     )
 }

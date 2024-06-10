@@ -57,7 +57,6 @@ exports[`renders header unchanged 1`] = `
         </svg>
       </div>
     </div>
-    <line />
   </header>
 </div>
 `;
