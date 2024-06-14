@@ -1,34 +1,45 @@
-import { Checkbox, Input } from "@headlessui/react";
+'use client'
+
 import { ArrowLeftCircleIcon, ArrowRightCircleIcon } from "@heroicons/react/24/solid";
-
-type DayProps = {
-  day: number
-}
-
-function Day({ day }: DayProps) {
-  return (
-    <div className="bg-slate-400 col-span-1 col-start-1 col-end-1 w-8">
-      {day}
-    </div>
-  );
-}
-
-function CompromiseContainer() {
-  return (
-    <div className="bg-blue-400 p-1 space-x-1 row-start-1 col-start-2 col-end-2 flex flex-row">
-      <Input placeholder="Day plan" className="grow-[12] w-1" />
-      <Input placeholder="Costs" className="shrink grow-[1] w-1" />
-      <Checkbox checked={true} className="group block size-4 rounded border bg-white data-[checked]:bg-blue-500">
-        <svg className="stroke-white opacity-0 group-data-[checked]:opacity-100" viewBox="0 0 14 14" fill="none">
-          <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </Checkbox>
-    </div>
-  );
-}
+import CompromiseContainer, { Compromise } from "./components/compromise";
+import Slot from "./components/slot";
+import Day from "./components/day";
+import { useEffect, useState } from "react";
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import invariant from "tiny-invariant";
 
 export default function Home() {
   const days = Array.from(Array(25).keys()).slice(1);
+  const [compromises, setCompromises] = useState<Compromise[]>([{ id: 256, index: 2, plan: "My plan", costs: 20, resolved: false }]);
+
+  useEffect(() => {
+    return monitorForElements({
+      onDrop({ source, location }) {
+        const destination = location.current.dropTargets[0];
+        if (!destination)
+          return;
+
+        const destinationLocation = destination.data.location;
+        if (typeof destinationLocation !== 'number')
+          return;
+
+        const sourceId = source.data.id;
+
+        const compromise = compromises.find(x => x.id == sourceId);
+        invariant(compromise);
+        const otherCompromises = compromises.filter(x => x.id != sourceId)
+
+        setCompromises([
+          {
+            id: compromise.id,
+            costs: compromise.costs,
+            index: destinationLocation,
+            plan: compromise.plan,
+            resolved: compromise.resolved
+          }, ...otherCompromises]);
+      }
+    });
+  }, [compromises]);
 
   return (
     <main className="flex flex-row w-full justify-center">
@@ -42,11 +53,19 @@ export default function Home() {
         </div>
         <div className="bg-white w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1">
           {
-            days.map((item, index) => (
-              <Day key={index} day={item} />
-            ))
+            days.map((item, index) => {
+              const compromise = compromises.find(x => x.index == item);
+              return (
+                <>
+                  <Day key={index} day={item} />
+                  <Slot key={index + 100} location={item} >
+                    {
+                      compromise ? <CompromiseContainer {...compromise} /> : ""
+                    }
+                  </Slot>
+                </>)
+            })
           }
-          <CompromiseContainer />
         </div>
       </div>
     </main>
