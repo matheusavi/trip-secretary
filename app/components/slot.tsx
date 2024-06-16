@@ -4,13 +4,13 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { ReactNode } from "react";
+import { ElementType } from "./compromise";
 
 type SlotProps = {
   location: number;
-  children: ReactNode;
 };
 
-export default function Slot({ location, children }: SlotProps) {
+export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
   const [isDraggedOver, setIsDraggegOver] = useState(false);
 
@@ -20,7 +20,11 @@ export default function Slot({ location, children }: SlotProps) {
 
     return dropTargetForElements({
       element: el,
-      onDragEnter: () => setIsDraggegOver(true),
+      onDragEnter: (location) => {
+        //    if (location.source.data.type === ElementType.Resizer) return;
+
+        setIsDraggegOver(true);
+      },
       onDragLeave: () => setIsDraggegOver(false),
       onDrop: () => setIsDraggegOver(false),
       getData: () => ({ location }),
@@ -32,8 +36,6 @@ export default function Slot({ location, children }: SlotProps) {
       ref={ref}
       className="bg-slate-600"
       style={isDraggedOver ? { backgroundColor: "blue" } : {}}
-    >
-      {children}
-    </div>
+    />
   );
 }
