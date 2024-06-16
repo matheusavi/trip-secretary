@@ -4,99 +4,20 @@ import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
 } from "@heroicons/react/24/solid";
-import CompromiseContainer, {
-  Compromise,
-  ElementType,
-} from "./components/compromise";
 import Slot from "./components/slot";
 import Day from "./components/day";
-import { useEffect, useState } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import invariant from "tiny-invariant";
+import CompromiseContainer from "./components/compromise/compromiseContainer";
+import { useAtom } from "jotai";
+import {
+  compromiseEffect,
+  compromisesAtom,
+} from "./components/compromise/compromiseAtom";
 
 export default function Home() {
-  const days = Array.from(Array(25).keys()).slice(1);
-  const [compromises, setCompromises] = useState<Compromise[]>([
-    {
-      id: 256,
-      index: 2,
-      plan: "My plan",
-      costs: 20,
-      resolved: false,
-      size: 2,
-    },
-  ]);
+  const hours = Array.from(Array(25).keys()).slice(1);
 
-  useEffect(() => {
-    return monitorForElements({
-      onDrop({ source, location }) {
-        const destination = location.current.dropTargets[0];
-        if (!destination) return;
-
-        const destinationLocation = destination.data.location;
-
-        if (typeof destinationLocation !== "number") return;
-
-        const type = source.data.type;
-        const sourceId = source.data.id;
-        const compromise = compromises.find((x) => x.id == sourceId);
-        invariant(compromise);
-        const otherCompromises = compromises.filter((x) => x.id != sourceId);
-
-        switch (type) {
-          case ElementType.Data: {
-            setCompromises([
-              {
-                id: compromise.id,
-                costs: compromise.costs,
-                index: destinationLocation,
-                plan: compromise.plan,
-                resolved: compromise.resolved,
-                size: compromise.size,
-              },
-              ...otherCompromises,
-            ]);
-            break;
-          }
-          case ElementType.Resizer: {
-            let newSize = destinationLocation + 1 - compromise.index;
-            if (newSize <= 0) return;
-            setCompromises([
-              {
-                id: compromise.id,
-                costs: compromise.costs,
-                index: compromise.index,
-                plan: compromise.plan,
-                resolved: compromise.resolved,
-                size: newSize,
-              },
-              ...otherCompromises,
-            ]);
-            break;
-          }
-        }
-      },
-    });
-  }, [compromises]);
-
-  function renderDays() {
-    const elements = [];
-    let remaining = 0;
-    for (var i = 0; i < days.length; i++) {
-      elements.push(<Day key={i} day={days[i]} />);
-      if (remaining > 0) remaining--;
-      else {
-        const compromise = compromises.find((x) => x.index == days[i]);
-        if (compromise) {
-          elements.push(<CompromiseContainer {...compromise} />);
-          remaining = compromise.size - 1;
-        } else {
-          elements.push(<Slot key={"slot" + i} location={days[i]} />);
-        }
-      }
-    }
-    return elements;
-  }
+  const [compromises] = useAtom(compromisesAtom);
+  useAtom(compromiseEffect);
 
   return (
     <main className="flex flex-row w-full justify-center">
@@ -108,8 +29,16 @@ export default function Home() {
             <ArrowRightCircleIcon />
           </div>
         </div>
-        <div className="bg-white w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1">
-          {renderDays()}
+        <div className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1">
+          {hours.map((_, i) => (
+            <Day key={i} day={hours[i]} />
+          ))}
+          {hours.map((_, i) => (
+            <Slot key={"slot" + i} location={hours[i]} />
+          ))}
+          {compromises.map((value) => (
+            <CompromiseContainer key={"compromise" + value.id} id={value.id} />
+          ))}
         </div>
       </div>
     </main>

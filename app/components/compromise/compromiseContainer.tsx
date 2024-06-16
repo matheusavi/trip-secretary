@@ -6,31 +6,17 @@ import invariant from "tiny-invariant";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
-import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { ElementType } from "./compromise";
+import { useAtomValue } from "jotai";
+import { compromisesAtom } from "./compromiseAtom";
 
-export enum ElementType {
-  Data,
-  Resizer,
-}
-
-export class Compromise {
-  id: number = 0;
-  index: number = 0;
-  plan: string = "";
-  costs: number = 0;
-  resolved: boolean = false;
-  size: number = 0;
-}
-
-export default function CompromiseContainer(compromise: Compromise) {
+export default function CompromiseContainer({ id }: { id: number }) {
   const ref = useRef(null);
   const dividerRef = useRef(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const [dragging, setDragging] = useState<boolean>(false);
-
-  function getHeight(location: DragLocationHistory) {
-    return location.current.input.clientY - location.initial.input.clientY;
-  }
+  const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
+  invariant(compromise);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -38,11 +24,20 @@ export default function CompromiseContainer(compromise: Compromise) {
 
     return draggable({
       element: el,
-      onDragStart: () => setDragging(true),
-      onDrop: () => setDragging(false),
+      onGenerateDragPreview: ({ nativeSetDragImage }) => {
+        disableNativeDragPreview({ nativeSetDragImage });
+        preventUnhandled.start();
+      },
+      onDragStart() {
+        setDragging(true);
+      },
+      onDrop: () => {
+        setDragging(false);
+        preventUnhandled.stop();
+      },
       getInitialData: () => ({ id: compromise.id, type: ElementType.Data }),
     });
-  }, [compromise]);
+  }, [dragging, compromise.id]);
 
   useEffect(() => {
     const divider = dividerRef.current;
@@ -53,27 +48,30 @@ export default function CompromiseContainer(compromise: Compromise) {
       getInitialData: () => ({ id: compromise.id, type: ElementType.Resizer }),
       onGenerateDragPreview: ({ nativeSetDragImage }) => {
         disableNativeDragPreview({ nativeSetDragImage });
-
         preventUnhandled.start();
       },
-      onDragStart() { },
-      onDrop: ({ location }) => {
-        contentRef.current?.style.setProperty(
-          "height",
-          `${getHeight(location)}px`,
-        );
+      onDragStart() {
+        setDragging(true);
       },
-      onDrag({ location }) { },
+      onDrop: () => {
+        preventUnhandled.stop();
+        setDragging(false);
+      },
     });
-  }, [compromise]);
+  }, [dragging, compromise.id]);
 
   return (
     <div
       ref={contentRef}
-      style={{ gridRow: `span ${compromise.size} / span ${compromise.size}` }}
+      className="col-start-3 flex flex-col"
+      style={{
+        gridRow: `${compromise.index} / span ${compromise.size}`,
+        gridColumn: 2,
+        zIndex: dragging ? 5 : 20,
+      }}
     >
       <div
-        className="bg-blue-400 p-1 space-x-1 flex flex-row"
+        className="bg-blue-400 p-1 space-x-1 flex flex-grow w-full"
         style={dragging ? { opacity: 0.4 } : {}}
         ref={ref}
       >
@@ -81,11 +79,13 @@ export default function CompromiseContainer(compromise: Compromise) {
           placeholder="Day plan"
           className="grow-[12] w-1"
           value={compromise.plan}
+          readOnly
         />
         <Input
           placeholder="Costs"
           className="shrink grow-[1] w-1"
           value={compromise.costs}
+          readOnly
         />
         <Checkbox
           checked={compromise.resolved}
@@ -107,7 +107,7 @@ export default function CompromiseContainer(compromise: Compromise) {
       </div>
       <div
         ref={dividerRef}
-        className="border-b-2 h-5 w-full relative flex-grow-0 bg-red-600 border-red-600 cursor-row-resize"
+        className="h-2 w-full flex-grow-0 flex-shrink bg-red-600 cursor-row-resize"
       ></div>
     </div>
   );

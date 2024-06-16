@@ -1,10 +1,8 @@
 "use client";
 
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import invariant from "tiny-invariant";
-import { ReactNode } from "react";
-import { ElementType } from "./compromise";
 
 type SlotProps = {
   location: number;
@@ -12,7 +10,6 @@ type SlotProps = {
 
 export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
-  const [isDraggedOver, setIsDraggegOver] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
@@ -20,13 +17,6 @@ export default function Slot({ location }: SlotProps) {
 
     return dropTargetForElements({
       element: el,
-      onDragEnter: (location) => {
-        //    if (location.source.data.type === ElementType.Resizer) return;
-
-        setIsDraggegOver(true);
-      },
-      onDragLeave: () => setIsDraggegOver(false),
-      onDrop: () => setIsDraggegOver(false),
       getData: () => ({ location }),
     });
   }, [location]);
@@ -34,8 +24,8 @@ export default function Slot({ location }: SlotProps) {
   return (
     <div
       ref={ref}
-      className="bg-slate-600"
-      style={isDraggedOver ? { backgroundColor: "blue" } : {}}
+      className="z-10"
+      style={{ gridRow: location, gridColumn: 2 }}
     />
   );
 }
