@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders header unchanged 1`] = `
+<div>
+  <div
+    class="z-10"
+    data-drop-target-for-element="true"
+    style="grid-row: 1; grid-column: 2;"
+  />
+</div>
+`;

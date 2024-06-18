@@ -17,6 +17,10 @@ const config: Config = {
   coverageProvider: "v8",
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  testMatch: [
+    "**/__tests__/**/*.+(ts|tsx|js|jsx)",
+    "**/?(*.)+(spec|test).+(ts|tsx|js|jsx)",
+  ],
   coverageThreshold: {
     global: {
       branches: 80,
