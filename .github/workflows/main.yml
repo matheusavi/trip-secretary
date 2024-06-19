@@ -3,7 +3,7 @@ name: Run tests
 on:
   pull_request:
     branches:
-        - main
+      - main
 
 jobs:
   test:
@@ -14,10 +14,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm install
-  
+
       - name: Run jest tests
         run: npm test

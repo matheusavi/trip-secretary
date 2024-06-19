@@ -31,3 +31,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.grid > * {
+  @apply border-cyan-400 border-b-2;
+}
