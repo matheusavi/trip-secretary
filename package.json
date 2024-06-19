@@ -23,6 +23,7 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@atlaskit/pragmatic-drag-and-drop-unit-testing": "^1.0.0",
     "@testing-library/jest-dom": "^6.4.5",
     "@testing-library/react": "^16.0.0",
     "@types/babel__core": "^7.20.5",

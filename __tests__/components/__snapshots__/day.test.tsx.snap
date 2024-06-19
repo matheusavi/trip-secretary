@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders day unchanged 1`] = `
+<div>
+  <div
+    class="bg-slate-400 col-span-1 col-start-1 col-end-1 w-8"
+  >
+    1
+  </div>
+</div>
+`;

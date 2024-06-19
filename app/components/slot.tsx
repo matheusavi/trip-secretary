@@ -26,6 +26,7 @@ export default function Slot({ location }: SlotProps) {
       ref={ref}
       className="z-10"
       style={{ gridRow: location, gridColumn: 2 }}
+      data-testid={"slot-" + location}
     />
   );
 }

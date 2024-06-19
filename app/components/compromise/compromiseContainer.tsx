@@ -69,11 +69,13 @@ export default function CompromiseContainer({ id }: { id: number }) {
         gridColumn: 2,
         zIndex: dragging ? 5 : 20,
       }}
+      data-testid="container-div"
     >
       <div
         className="bg-blue-400 p-1 space-x-1 flex flex-grow w-full"
         style={dragging ? { opacity: 0.4 } : {}}
         ref={ref}
+        data-testid="draggable"
       >
         <Input
           placeholder="Day plan"
@@ -90,6 +92,7 @@ export default function CompromiseContainer({ id }: { id: number }) {
         <Checkbox
           checked={compromise.resolved}
           className="group block size-4 rounded border bg-white data-[checked]:bg-blue-500"
+          data-testid="checkbox"
         >
           <svg
             className="stroke-white opacity-0 group-data-[checked]:opacity-100"
@@ -108,6 +111,7 @@ export default function CompromiseContainer({ id }: { id: number }) {
       <div
         ref={dividerRef}
         className="h-2 w-full flex-grow-0 flex-shrink bg-red-600 cursor-row-resize"
+        data-testid="resizer"
       ></div>
     </div>
   );

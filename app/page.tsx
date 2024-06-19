@@ -23,7 +23,9 @@ export default function Home() {
     <main className="flex flex-row w-full justify-center">
       <div className="container bg-slate-600">
         <div className="flex flex-row flex-nowrap justify-between">
-          <h1 className="flex-grow">Trip to Monza - 01/06/2024</h1>
+          <h1 className="flex-grow" data-testid="title">
+            Trip to Monza - 01/06/2024
+          </h1>
           <div className="h-8 flex flex-row justify-between grow-0">
             <ArrowLeftCircleIcon />
             <ArrowRightCircleIcon />

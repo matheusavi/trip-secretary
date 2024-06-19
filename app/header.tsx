@@ -11,7 +11,6 @@ export default function Header() {
           alt="Trip secretary Logo"
           width={60}
           height={60}
-          priority
         />
         <h2 className="text-3xl font-bold">Trip Secretary</h2>
         <div className="flex flex-row items-center cursor-pointer">
