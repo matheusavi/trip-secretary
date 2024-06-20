@@ -1,20 +1,22 @@
 "use client";
 
-import { Checkbox, Input } from "@headlessui/react";
-import { useEffect, useRef, useState } from "react";
+import { Checkbox, Textarea } from "@headlessui/react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
 import { ElementType } from "./compromise";
-import { useAtomValue } from "jotai";
-import { compromisesAtom } from "./compromiseAtom";
+import { useAtomValue, useSetAtom } from "jotai";
+import { compromisesAtom, modifyCompromiseAtom } from "./compromiseAtom";
+import { NumberFormatValues, NumericFormat } from "react-number-format";
 
 export default function CompromiseContainer({ id }: { id: number }) {
   const ref = useRef(null);
   const dividerRef = useRef(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
+  const updateAtom = useSetAtom(modifyCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
 
@@ -60,6 +62,21 @@ export default function CompromiseContainer({ id }: { id: number }) {
     });
   }, [dragging, compromise.id]);
 
+  function handleResolvedChange(checked: boolean): void {
+    updateAtom({ id: id, update: { resolved: checked } });
+  }
+
+  function handleCostsChanged(values: NumberFormatValues): void {
+    updateAtom({
+      id: id,
+      update: { costs: values.floatValue },
+    });
+  }
+
+  function handlePlanChange(event: ChangeEvent<HTMLTextAreaElement>): void {
+    updateAtom({ id: id, update: { plan: event.target.value } });
+  }
+
   return (
     <div
       ref={contentRef}
@@ -77,22 +94,24 @@ export default function CompromiseContainer({ id }: { id: number }) {
         ref={ref}
         data-testid="draggable"
       >
-        <Input
+        <Textarea
           placeholder="Day plan"
           className="grow-[12] w-1"
           value={compromise.plan}
-          readOnly
+          onChange={handlePlanChange}
         />
-        <Input
+        <NumericFormat
           placeholder="Costs"
           className="shrink grow-[1] w-1"
           value={compromise.costs}
-          readOnly
+          onValueChange={handleCostsChanged}
+          prefix="$"
         />
         <Checkbox
           checked={compromise.resolved}
           className="group block size-4 rounded border bg-white data-[checked]:bg-blue-500"
           data-testid="checkbox"
+          onChange={handleResolvedChange}
         >
           <svg
             className="stroke-white opacity-0 group-data-[checked]:opacity-100"

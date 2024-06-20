@@ -19,6 +19,18 @@ export const compromisesAtom = atom<Compromise[]>([
   },
 ]);
 
+type ModifyCompromiseParameters = {
+  id: number;
+  update: Partial<Compromise>;
+};
+
+export const modifyCompromiseAtom = atom(
+  null,
+  (get, set, { id, update }: ModifyCompromiseParameters) => {
+    modifyCompromise(id, update, get(compromisesAtom), set);
+  },
+);
+
 function modifyCompromise(
   id: number,
   updatedCompromise: Partial<Compromise>,
