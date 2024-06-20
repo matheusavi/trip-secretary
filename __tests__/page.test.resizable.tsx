@@ -36,4 +36,5 @@ describe("Page", () => {
       expect(screen.getByTestId("draggable")).not.toHaveStyle("opacity: 0.4");
     });
   });
+  //TODO tests to resize over another
 });

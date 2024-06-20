@@ -11,7 +11,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { compromisesAtom, modifyCompromiseAtom } from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
 
-export default function CompromiseContainer({ id }: { id: number }) {
+export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef(null);
   const dividerRef = useRef(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
