@@ -53,7 +53,7 @@ function isRangeAvailable(
 
   const overlap = compromises.find(
     (x) =>
-      (index < x.index && endIndex > x.index) ||
+      (index < x.index && endIndex >= x.index) ||
       (index >= x.index && index < x.index + x.size - 1),
   );
   return !overlap;
@@ -93,12 +93,12 @@ function updateAtom(
   switch (type) {
     case ElementType.Data: {
       if (
-        compromise.index == destinationLocation /*||
+        compromise.index == destinationLocation ||
         !isRangeAvailable(
           destinationLocation,
-          compromise.size + 1,
+          compromise.size,
           compromises.filter((x) => x.id !== sourceId),
-        )*/
+        )
       )
         return;
 
@@ -114,14 +114,15 @@ function updateAtom(
       let newSize = destinationLocation + 1 - compromise.index;
       if (
         newSize <= 0 ||
-        newSize == compromise.size /*||
+        newSize == compromise.size ||
         !isRangeAvailable(
-          destinationLocation,
-          newSize + 1,
+          compromise.index,
+          newSize,
           compromises.filter((x) => x.id !== sourceId),
-        )*/
+        )
       )
         return;
+
       modifyCompromise(sourceId, { size: newSize }, compromises, set);
       break;
     }
