@@ -16,6 +16,14 @@ type ModifyCompromiseParameters = {
   update: Partial<Compromise>;
 };
 
+export const deleteCompromiseAtom = atom(
+  null,
+  (get, set, { id }: { id: string }) => {
+    const compromises = get(compromisesAtom).filter((x) => x.id !== id);
+    set(compromisesAtom, compromises);
+  },
+);
+
 export const modifyCompromiseAtom = atom(
   null,
   (get, set, { id, update }: ModifyCompromiseParameters) => {
@@ -54,7 +62,8 @@ function isRangeAvailable(
   const overlap = compromises.find(
     (x) =>
       (index < x.index && endIndex >= x.index) ||
-      (index >= x.index && index < x.index + x.size - 1),
+      (index >= x.index && index < x.index + x.size - 1) ||
+      x.index == index,
   );
   return !overlap;
 }

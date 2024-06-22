@@ -8,8 +8,13 @@ import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unha
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
 import { ElementType } from "./compromise";
 import { useAtomValue, useSetAtom } from "jotai";
-import { compromisesAtom, modifyCompromiseAtom } from "./compromiseAtom";
+import {
+  compromisesAtom,
+  deleteCompromiseAtom,
+  modifyCompromiseAtom,
+} from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
+import { XCircleIcon } from "@heroicons/react/24/solid";
 
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef(null);
@@ -17,6 +22,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
   const updateAtom = useSetAtom(modifyCompromiseAtom);
+  const deleteAtom = useSetAtom(deleteCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
 
@@ -77,22 +83,26 @@ export default function CompromiseContainer({ id }: { id: string }) {
     updateAtom({ id: id, update: { plan: event.target.value } });
   }
 
+  function handleDeletePlan(event: React.MouseEvent<HTMLElement>) {
+    deleteAtom({ id: id });
+  }
+
   return (
     <div
       ref={contentRef}
-      className="col-start-3 flex flex-col"
+      className="col-start-3 flex flex-col compromise-container"
       style={{
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
         zIndex: dragging ? 5 : 20,
       }}
-      data-testid="container-div"
+      data-testid={"container-div-" + compromise.index}
     >
       <div
         className="bg-blue-400 p-1 space-x-1 flex flex-grow w-full"
         style={dragging ? { opacity: 0.4 } : {}}
         ref={ref}
-        data-testid="draggable"
+        data-testid={"draggable-" + compromise.index}
       >
         <Textarea
           placeholder="Day plan"
@@ -126,11 +136,17 @@ export default function CompromiseContainer({ id }: { id: string }) {
             />
           </svg>
         </Checkbox>
+        <div
+          onClick={handleDeletePlan}
+          data-testid={"remove-" + compromise.index}
+        >
+          <XCircleIcon className="flex-shrink-0 h-5" />
+        </div>
       </div>
       <div
         ref={dividerRef}
         className="h-2 w-full flex-grow-0 flex-shrink bg-red-600 cursor-row-resize"
-        data-testid="resizer"
+        data-testid={"resizer-" + compromise.index}
       ></div>
     </div>
   );

@@ -18,8 +18,11 @@ describe("Page", () => {
 
   it("Element is draggable", async () => {
     render(<Page />);
-    const draggable = screen.getByTestId("draggable");
-    const container = screen.getByTestId("container-div");
+
+    fireEvent.click(screen.getByTestId("slot-2"));
+
+    const draggable = screen.getByTestId("draggable-2");
+    const container = screen.getByTestId("container-div-2");
 
     fireEvent.dragStart(draggable);
 
@@ -36,13 +39,24 @@ describe("Page", () => {
       clientY: 10,
     });
 
-    fireEvent.drop(screen.getByTestId("draggable"));
+    fireEvent.drop(screen.getByTestId("draggable-2"));
     await waitFor(() => {
-      expect(screen.getByTestId("container-div")).toHaveStyle(
-        "grid-row: 13 / span 2; grid-column: 2; z-index: 20;",
+      expect(screen.getByTestId("container-div-13")).toHaveStyle(
+        "grid-row: 13 / span 1; grid-column: 2; z-index: 20;",
       );
-      expect(screen.getByTestId("draggable")).not.toHaveStyle("opacity: 0.4");
+      expect(screen.getByTestId("draggable-13")).not.toHaveStyle(
+        "opacity: 0.4",
+      );
+      fireEvent.click(screen.getByTestId("remove-13"));
     });
   });
-  //TODO tests to drag over another
+  it("Cant create two elements at same slot", async () => {
+    render(<Page />);
+
+    fireEvent.click(screen.getByTestId("slot-2"));
+    fireEvent.click(screen.getByTestId("slot-2"));
+    expect(
+      document.getElementsByClassName("compromise-container"),
+    ).toHaveLength(1);
+  });
 });

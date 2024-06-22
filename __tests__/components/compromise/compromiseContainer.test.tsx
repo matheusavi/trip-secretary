@@ -1,21 +1,64 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CompromiseContainer from "../../../app/components/compromise/compromiseContainer";
+import { useHydrateAtoms } from "jotai/utils";
+import { Compromise } from "@/app/components/compromise/compromise";
+import { Provider } from "jotai";
+import { ReactNode } from "react";
+import { compromisesAtom } from "@/app/components/compromise/compromiseAtom";
 
 describe("CompromiseContainer", () => {
+  const initialCompromise = new Compromise();
+
+  initialCompromise.index = 2;
+  initialCompromise.plan = "My plan";
+  initialCompromise.costs = 20;
+  initialCompromise.resolved = false;
+  initialCompromise.size = 2;
+
+  const HydrateAtoms = ({
+    initialValues,
+    children,
+  }: {
+    initialValues: [[typeof compromisesAtom, Compromise[]]];
+    children: ReactNode;
+  }) => {
+    useHydrateAtoms(initialValues);
+    return children;
+  };
+
+  const TestProvider = ({
+    initialValues,
+    children,
+  }: {
+    initialValues: [[typeof compromisesAtom, Compromise[]]];
+    children: ReactNode;
+  }) => (
+    <Provider>
+      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
+    </Provider>
+  );
+  const CompromiseProvider = () => {
+    return (
+      <TestProvider initialValues={[[compromisesAtom, [initialCompromise]]]}>
+        <CompromiseContainer id={initialCompromise.id} />
+      </TestProvider>
+    );
+  };
+
   it("Renders without crashing", () => {
-    render(<CompromiseContainer id={256} />);
+    render(<CompromiseProvider />);
     expect(screen.getByPlaceholderText("Day plan")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Costs")).toBeInTheDocument();
     expect(screen.getByTestId("checkbox")).toBeInTheDocument();
-    expect(screen.getByTestId("draggable")).toBeInTheDocument();
-    expect(screen.getByTestId("resizer")).toBeInTheDocument();
+    expect(screen.getByTestId("draggable-2")).toBeInTheDocument();
+    expect(screen.getByTestId("resizer-2")).toBeInTheDocument();
   });
 
   it("Element is draggable", async () => {
-    render(<CompromiseContainer id={256} />);
-    const draggable = screen.getByTestId("draggable");
-    const container = screen.getByTestId("container-div");
+    render(<CompromiseProvider />);
+    const draggable = screen.getByTestId("draggable-2");
+    const container = screen.getByTestId("container-div-2");
     fireEvent.dragStart(draggable);
 
     await waitFor(() => {
@@ -29,10 +72,10 @@ describe("CompromiseContainer", () => {
   });
 
   it("Element is resizable", async () => {
-    render(<CompromiseContainer id={256} />);
-    const resizable = screen.getByTestId("resizer");
-    const draggable = screen.getByTestId("draggable");
-    const container = screen.getByTestId("container-div");
+    render(<CompromiseProvider />);
+    const resizable = screen.getByTestId("resizer-2");
+    const draggable = screen.getByTestId("draggable-2");
+    const container = screen.getByTestId("container-div-2");
     fireEvent.dragStart(resizable);
 
     await waitFor(() => {
@@ -46,7 +89,7 @@ describe("CompromiseContainer", () => {
   });
 
   it("Elements are editable", async () => {
-    render(<CompromiseContainer id={256} />);
+    render(<CompromiseProvider />);
     const plan = screen.getByPlaceholderText("Day plan");
     const costs = screen.getByPlaceholderText("Costs");
     const checkbox = screen.getByTestId("checkbox");
