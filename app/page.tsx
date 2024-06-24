@@ -1,19 +1,18 @@
 "use client";
 
-import {
-  ArrowLeftCircleIcon,
-  ArrowRightCircleIcon,
-} from "@heroicons/react/24/solid";
 import Slot from "./components/slot";
 import Day from "./components/day";
+import Date from "./components/date";
 import CompromiseContainer from "./components/compromise/compromiseContainer";
 import { useAtom } from "jotai";
 import {
   compromiseEffect,
   compromisesAtom,
 } from "./components/compromise/compromiseAtom";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export default function Home() {
+  const [animationParent] = useAutoAnimate();
   const hours = Array.from(Array(25).keys()).slice(1);
 
   const [compromises] = useAtom(compromisesAtom);
@@ -24,14 +23,14 @@ export default function Home() {
       <div className="container bg-slate-600">
         <div className="flex flex-row flex-nowrap justify-between">
           <h1 className="flex-grow" data-testid="title">
-            Trip to Monza - 01/06/2024
+            Trip to Monza
           </h1>
-          <div className="h-8 flex flex-row justify-between grow-0">
-            <ArrowLeftCircleIcon />
-            <ArrowRightCircleIcon />
-          </div>
+          <Date />
         </div>
-        <div className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1">
+        <div
+          ref={animationParent}
+          className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1"
+        >
           {hours.map((_, i) => (
             <Day key={i} day={hours[i]} />
           ))}
