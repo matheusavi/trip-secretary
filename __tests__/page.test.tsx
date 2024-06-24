@@ -11,7 +11,7 @@ describe("Page", () => {
   it("Renders without crashing", () => {
     render(<Page />);
     for (var i = 1; i < 25; i++) {
-      expect(screen.getByText(i)).toBeInTheDocument();
+      expect(screen.getByTestId("hour-" + i)).toBeInTheDocument();
     }
     expect(screen.getByTestId("title")).toBeInTheDocument();
   });
