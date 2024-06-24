@@ -4,7 +4,7 @@ export enum ElementType {
 }
 
 export class Compromise {
-  id: number = 0;
+  id!: string;
   index: number = 0;
   plan: string = "";
   costs: number = 0;
