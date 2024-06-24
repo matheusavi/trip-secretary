@@ -1,7 +1,7 @@
 "use client";
 
 import Slot from "./components/slot";
-import Day from "./components/day";
+import Hour from "./components/day";
 import Date from "./components/date";
 import CompromiseContainer from "./components/compromise/compromiseContainer";
 import { useAtom } from "jotai";
@@ -32,7 +32,7 @@ export default function Home() {
           className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1"
         >
           {hours.map((_, i) => (
-            <Day key={i} day={hours[i]} />
+            <Hour key={i} day={hours[i]} />
           ))}
           {hours.map((_, i) => (
             <Slot key={"slot" + i} location={hours[i]} />
