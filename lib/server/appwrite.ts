@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 import { Client, Account } from "node-appwrite";
 import { cookies } from "next/headers";
 
