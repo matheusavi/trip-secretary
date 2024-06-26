@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import Page from "../app/page";
+import Page from "../app/day/page";
 
 beforeAll(() => {
   document.elementFromPoint = jest
