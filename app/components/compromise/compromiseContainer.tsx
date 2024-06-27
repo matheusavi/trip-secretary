@@ -10,6 +10,7 @@ import { ElementType } from "./compromise";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   compromisesAtom,
+  dateAtom,
   deleteCompromiseAtom,
   modifyCompromiseAtom,
 } from "./compromiseAtom";
