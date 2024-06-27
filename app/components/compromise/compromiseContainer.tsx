@@ -16,7 +16,6 @@ import {
 } from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
 import { XCircleIcon } from "@heroicons/react/24/solid";
-import { upsertCompromise } from "@/lib/server/appwrite";
 
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef(null);
@@ -25,7 +24,6 @@ export default function CompromiseContainer({ id }: { id: string }) {
   const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
   const updateAtom = useSetAtom(modifyCompromiseAtom);
   const deleteAtom = useSetAtom(deleteCompromiseAtom);
-  const date = useAtomValue(dateAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
 
