@@ -10,6 +10,7 @@ import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import type { CalendarDate } from "@internationalized/date";
+import { upsertCompromise } from "@/lib/server/appwrite";
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -37,17 +38,19 @@ export const modifyCompromiseAtom = atom(
 
 type CreateCompromiseParameters = {
   location: number;
+  date: string;
 };
 
 export const createCompromiseAtom = atom(
   null,
-  (get, set, { location }: CreateCompromiseParameters) => {
+  (get, set, { location, date }: CreateCompromiseParameters) => {
     const compromises = get(compromisesAtom);
     if (isRangeAvailable(location, 1, compromises)) {
       let newCompromise = new Compromise();
       newCompromise.id = uuidv4();
       newCompromise.index = location;
       newCompromise.size = 1;
+      newCompromise.date = date;
       set(compromisesAtom, [...compromises, newCompromise]);
     }
   },
@@ -72,6 +75,26 @@ function isRangeAvailable(
   return !overlap;
 }
 
+const debounceTimers: Record<string, NodeJS.Timeout | undefined> = {};
+
+function debounceById<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number,
+): (id: string, ...args: Parameters<T>) => void {
+  return function (id: string, ...args: Parameters<T>): void {
+    if (debounceTimers[id]) {
+      clearTimeout(debounceTimers[id]);
+    }
+
+    debounceTimers[id] = setTimeout(() => {
+      func(...args);
+      delete debounceTimers[id];
+    }, wait);
+  };
+}
+
+const debouncedUpsertCompromise = debounceById(upsertCompromise, 5000);
+
 function modifyCompromise(
   id: string,
   updatedCompromise: Partial<Compromise>,
@@ -81,6 +104,8 @@ function modifyCompromise(
   const updatedCompromises = compromises.map((compromise) =>
     compromise.id === id ? { ...compromise, ...updatedCompromise } : compromise,
   );
+  const compromiseToUpdate = updatedCompromises.find((x) => x.id == id);
+  debouncedUpsertCompromise(id, compromiseToUpdate);
   set(compromisesAtom, updatedCompromises);
 }
 
@@ -152,3 +177,23 @@ export const compromiseEffect = atomEffect((get, set) => {
     },
   });
 });
+
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number,
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+
+  return function (...args: Parameters<T>): void {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(later, wait);
+  };
+}

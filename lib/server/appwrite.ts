@@ -1,6 +1,12 @@
 "use server";
 import "server-only";
-import { Client, Account } from "node-appwrite";
+import {
+  Client,
+  Account,
+  Databases,
+  Query,
+  AppwriteException,
+} from "node-appwrite";
 import { cookies } from "next/headers";
 import { Compromise } from "@/app/components/compromise/compromise";
 
@@ -47,17 +53,49 @@ export async function getLoggedInUser() {
 }
 
 export async function getCompromisesForTheDate(date: string) {
-  const initialCompromise = new Compromise();
+  const client = new Client()
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
 
-  initialCompromise.id = "test";
-  initialCompromise.index = 2;
-  initialCompromise.plan = "My plan";
-  initialCompromise.costs = 20;
-  initialCompromise.resolved = false;
-  initialCompromise.size = 2;
-  initialCompromise.date = date;
-  if (initialCompromise.toPlainObject !== undefined)
-    return [initialCompromise?.toPlainObject()];
+  const databases = new Databases(client);
 
-  return [];
+  let result = await databases.listDocuments(
+    process.env.NEXT_APPWRITE_DATABASE,
+    process.env.NEXT_APPWRITE_COMPROMISES,
+    [Query.equal("date", [date])],
+  );
+
+  return result.documents;
+}
+
+export async function upsertCompromise(obj: any) {
+  const client = new Client()
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
+
+  const databases = new Databases(client);
+  console.log(obj);
+  try {
+    await databases.getDocument(
+      process.env.NEXT_APPWRITE_DATABASE,
+      process.env.NEXT_APPWRITE_COMPROMISES,
+      obj.id,
+    );
+
+    await databases.updateDocument(
+      process.env.NEXT_APPWRITE_DATABASE,
+      process.env.NEXT_APPWRITE_COMPROMISES,
+      obj.id,
+      obj,
+    );
+  } catch (ex) {
+    if (ex instanceof AppwriteException && ex.code == 404)
+      await databases.createDocument(
+        process.env.NEXT_APPWRITE_DATABASE,
+        process.env.NEXT_APPWRITE_COMPROMISES,
+        obj.id,
+        obj,
+      );
+    else console.error(ex);
+  }
 }

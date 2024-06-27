@@ -1,10 +1,10 @@
 "use client";
 
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import invariant from "tiny-invariant";
-import { createCompromiseAtom } from "./compromise/compromiseAtom";
+import { createCompromiseAtom, dateAtom } from "./compromise/compromiseAtom";
 
 type SlotProps = {
   location: number;
@@ -12,6 +12,7 @@ type SlotProps = {
 
 export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
+  const date = useAtomValue(dateAtom);
 
   useEffect(() => {
     const el = ref.current;
@@ -25,7 +26,7 @@ export default function Slot({ location }: SlotProps) {
 
   const createCompromise = useSetAtom(createCompromiseAtom);
   function handleCreateCompromise(event: React.MouseEvent<HTMLElement>) {
-    createCompromise({ location: location });
+    createCompromise({ location: location, date: date.toString() });
   }
 
   return (

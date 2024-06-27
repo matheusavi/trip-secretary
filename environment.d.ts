@@ -8,6 +8,8 @@ declare global {
       NEXT_PUBLIC_APPWRITE_ENDPOINT: string;
       NEXT_PUBLIC_APPWRITE_PROJECT: string;
       NEXT_APPWRITE_KEY: string;
+      NEXT_APPWRITE_DATABASE: string;
+      NEXT_APPWRITE_COMPROMISES: string;
     }
   }
 }
