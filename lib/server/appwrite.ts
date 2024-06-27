@@ -6,9 +6,10 @@ import {
   Databases,
   Query,
   AppwriteException,
+  Permission,
+  Role,
 } from "node-appwrite";
 import { cookies } from "next/headers";
-import { Compromise } from "@/app/components/compromise/compromise";
 
 export async function createSessionClient() {
   const client = new Client();
@@ -59,10 +60,12 @@ export async function getCompromisesForTheDate(date: string) {
 
   const databases = new Databases(client);
 
+  const user = await getLoggedInUser();
+
   let result = await databases.listDocuments(
     process.env.NEXT_APPWRITE_DATABASE,
     process.env.NEXT_APPWRITE_COMPROMISES,
-    [Query.equal("date", [date])],
+    [Query.equal("date", [date]), Query.equal("user", user!.$id)],
   );
 
   return result.documents;
@@ -74,7 +77,9 @@ export async function upsertCompromise(obj: any) {
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
 
   const databases = new Databases(client);
-  console.log(obj);
+  const user = await getLoggedInUser();
+
+  obj.user = user!.$id;
   try {
     await databases.getDocument(
       process.env.NEXT_APPWRITE_DATABASE,
