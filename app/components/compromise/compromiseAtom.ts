@@ -1,4 +1,4 @@
-import { Setter, atom } from "jotai";
+import { Setter, atom, useAtomValue } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -8,6 +8,8 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { today, getLocalTimeZone } from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -15,6 +17,8 @@ type ModifyCompromiseParameters = {
   id: string;
   update: Partial<Compromise>;
 };
+
+export const dateAtom = atom<CalendarDate>(today(getLocalTimeZone()));
 
 export const deleteCompromiseAtom = atom(
   null,

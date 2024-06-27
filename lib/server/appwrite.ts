@@ -2,6 +2,7 @@
 import "server-only";
 import { Client, Account } from "node-appwrite";
 import { cookies } from "next/headers";
+import { Compromise } from "@/app/components/compromise/compromise";
 
 export async function createSessionClient() {
   const client = new Client();
@@ -43,4 +44,20 @@ export async function getLoggedInUser() {
   } catch (error) {
     return null;
   }
+}
+
+export async function getCompromisesForTheDate(date: string) {
+  const initialCompromise = new Compromise();
+
+  initialCompromise.id = "test";
+  initialCompromise.index = 2;
+  initialCompromise.plan = "My plan";
+  initialCompromise.costs = 20;
+  initialCompromise.resolved = false;
+  initialCompromise.size = 2;
+  initialCompromise.date = date;
+  if (initialCompromise.toPlainObject !== undefined)
+    return [initialCompromise?.toPlainObject()];
+
+  return [];
 }
