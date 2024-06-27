@@ -1,16 +1,14 @@
 import { Button } from "@headlessui/react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
 import DatePickerContainer from "./datepicker";
-import { useSetAtom } from "jotai";
-import { compromisesAtom } from "./compromise/compromiseAtom";
-import type { CalendarDate } from "@internationalized/date";
+import { useAtom, useSetAtom } from "jotai";
+import { compromisesAtom, dateAtom } from "./compromise/compromiseAtom";
 import { getCompromisesForTheDate } from "@/lib/server/appwrite";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Compromise } from "./compromise/compromise";
-import { today, getLocalTimeZone } from "@internationalized/date";
 
 export default function Date() {
-  const [date, setDate] = useState<CalendarDate>(today(getLocalTimeZone()));
+  const [date, setDate] = useAtom(dateAtom);
 
   const setCompromises = useSetAtom(compromisesAtom);
 

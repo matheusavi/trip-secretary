@@ -22,7 +22,7 @@ export default function Slot({ location }: SlotProps) {
       element: el,
       getData: () => ({ location }),
     });
-  }, [location]);
+  }, [location, date]);
 
   const createCompromise = useSetAtom(createCompromiseAtom);
   function handleCreateCompromise(event: React.MouseEvent<HTMLElement>) {
