@@ -29,6 +29,9 @@ const config: Config = {
       statements: 80,
     },
   },
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
+  },
 };
 
 export default createJestConfig(config);
