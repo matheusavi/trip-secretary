@@ -10,6 +10,7 @@ exports[`renders header unchanged 1`] = `
     >
       <img
         alt="Trip secretary Logo"
+        aria-label="Logo"
         class="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
         data-nimg="1"
         decoding="async"
@@ -29,6 +30,7 @@ exports[`renders header unchanged 1`] = `
       >
         <svg
           aria-hidden="true"
+          aria-label="User profile"
           class="h-10 flex-shrink-0 dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
           data-slot="icon"
           fill="currentColor"
@@ -43,6 +45,7 @@ exports[`renders header unchanged 1`] = `
         </svg>
         <svg
           aria-hidden="true"
+          aria-label="User options"
           class="flex-shrink-0 h-5"
           data-slot="icon"
           fill="currentColor"

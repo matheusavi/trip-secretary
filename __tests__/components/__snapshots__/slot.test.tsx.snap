@@ -3,6 +3,7 @@
 exports[`renders slot unchanged 1`] = `
 <div>
   <div
+    aria-label="Slot 1"
     class="z-10"
     data-drop-target-for-element="true"
     data-testid="slot-1"

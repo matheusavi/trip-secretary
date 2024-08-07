@@ -36,6 +36,7 @@ export default function Slot({ location }: SlotProps) {
       style={{ gridRow: location, gridColumn: 2 }}
       data-testid={"slot-" + location}
       onClick={handleCreateCompromise}
+      aria-label={"Slot " + location}
     />
   );
 }
