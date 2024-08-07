@@ -23,16 +23,4 @@ export class Compromise {
     instance.date = obj.date;
     return instance;
   }
-
-  toPlainObject?() {
-    return {
-      id: this.id,
-      index: this.index,
-      plan: this.plan,
-      costs: this.costs,
-      resolved: this.resolved,
-      size: this.size,
-      date: this.date,
-    };
-  }
 }

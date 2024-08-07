@@ -10,10 +10,12 @@ describe("Page", () => {
   it("Element is resizable", async () => {
     render(<Page />);
 
+    await new Promise((r) => setTimeout(r, 200));
+
     fireEvent.click(screen.getByTestId("slot-2"));
 
-    const draggable = screen.getByTestId("draggable-2");
     const container = screen.getByTestId("container-div-2");
+    const draggable = screen.getByTestId("draggable-2");
     const resizable = screen.getByTestId("resizer-2");
 
     fireEvent.dragStart(resizable);
@@ -42,6 +44,8 @@ describe("Page", () => {
   });
   it("Element does not overlap when resizing", async () => {
     render(<Page />);
+
+    await new Promise((r) => setTimeout(r, 200));
 
     fireEvent.click(screen.getByTestId("slot-2"));
 
