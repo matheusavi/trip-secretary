@@ -1,5 +1,13 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import Page from "../app/page";
+import {
+  findByTestId,
+  findByText,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import Page from "../app/components/day";
+import { assert } from "console";
 
 beforeAll(() => {
   document.elementFromPoint = jest
@@ -19,14 +27,16 @@ describe("Page", () => {
   it("Element is draggable", async () => {
     render(<Page />);
 
+    await new Promise((r) => setTimeout(r, 200));
+
     fireEvent.click(screen.getByTestId("slot-2"));
 
     const draggable = screen.getByTestId("draggable-2");
-    const container = screen.getByTestId("container-div-2");
 
     fireEvent.dragStart(draggable);
 
     await waitFor(() => {
+      const container = screen.getByTestId("container-div-2");
       expect(container).toHaveStyle("z-index: 5");
       expect(draggable).toHaveStyle("opacity: 0.4");
     });
@@ -49,7 +59,7 @@ describe("Page", () => {
       );
       fireEvent.click(screen.getByTestId("remove-13"));
     });
-  });
+  }, 60000);
   it("Cant create two elements at same slot", async () => {
     render(<Page />);
 

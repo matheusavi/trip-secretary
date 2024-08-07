@@ -1,4 +1,4 @@
-import { Setter, atom } from "jotai";
+import { Setter, atom, useAtomValue } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -8,6 +8,9 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { today, getLocalTimeZone } from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
+import { upsertCompromise } from "@/lib/server/appwrite";
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -15,6 +18,8 @@ type ModifyCompromiseParameters = {
   id: string;
   update: Partial<Compromise>;
 };
+
+export const dateAtom = atom<CalendarDate>(today(getLocalTimeZone()));
 
 export const deleteCompromiseAtom = atom(
   null,
@@ -33,17 +38,19 @@ export const modifyCompromiseAtom = atom(
 
 type CreateCompromiseParameters = {
   location: number;
+  date: string;
 };
 
 export const createCompromiseAtom = atom(
   null,
-  (get, set, { location }: CreateCompromiseParameters) => {
+  (get, set, { location, date }: CreateCompromiseParameters) => {
     const compromises = get(compromisesAtom);
     if (isRangeAvailable(location, 1, compromises)) {
       let newCompromise = new Compromise();
       newCompromise.id = uuidv4();
       newCompromise.index = location;
       newCompromise.size = 1;
+      newCompromise.date = date;
       set(compromisesAtom, [...compromises, newCompromise]);
     }
   },
@@ -68,6 +75,26 @@ function isRangeAvailable(
   return !overlap;
 }
 
+const debounceTimers: Record<string, NodeJS.Timeout | undefined> = {};
+
+function debounceById<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number,
+): (id: string, ...args: Parameters<T>) => void {
+  return function (id: string, ...args: Parameters<T>): void {
+    if (debounceTimers[id]) {
+      clearTimeout(debounceTimers[id]);
+    }
+
+    debounceTimers[id] = setTimeout(() => {
+      func(...args);
+      delete debounceTimers[id];
+    }, wait);
+  };
+}
+
+const debouncedUpsertCompromise = debounceById(upsertCompromise, 5000);
+
 function modifyCompromise(
   id: string,
   updatedCompromise: Partial<Compromise>,
@@ -77,6 +104,8 @@ function modifyCompromise(
   const updatedCompromises = compromises.map((compromise) =>
     compromise.id === id ? { ...compromise, ...updatedCompromise } : compromise,
   );
+  const compromiseToUpdate = updatedCompromises.find((x) => x.id == id);
+  debouncedUpsertCompromise(id, compromiseToUpdate);
   set(compromisesAtom, updatedCompromises);
 }
 

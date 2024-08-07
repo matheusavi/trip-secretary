@@ -11,11 +11,18 @@ export default function Header() {
           alt="Trip secretary Logo"
           width={60}
           height={60}
+          aria-label="Logo"
         />
         <h2 className="text-3xl font-bold">Trip Secretary</h2>
         <div className="flex flex-row items-center cursor-pointer">
-          <UserCircleIcon className="h-10 flex-shrink-0 dark:drop-shadow-[0_0_0.3rem_#ffffff70]" />
-          <ChevronDownIcon className="flex-shrink-0 h-5" />
+          <UserCircleIcon
+            className="h-10 flex-shrink-0 dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
+            aria-label="User profile"
+          />
+          <ChevronDownIcon
+            className="flex-shrink-0 h-5"
+            aria-label="User options"
+          />
         </div>
       </div>
     </header>
