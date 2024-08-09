@@ -32,7 +32,7 @@ export default function Slot({ location }: SlotProps) {
   return (
     <div
       ref={ref}
-      className="z-10"
+      className="z-10 h-10"
       style={{ gridRow: location, gridColumn: 2 }}
       data-testid={"slot-" + location}
       onClick={handleCreateCompromise}

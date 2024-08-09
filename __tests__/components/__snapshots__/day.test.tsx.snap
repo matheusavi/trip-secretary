@@ -3,10 +3,10 @@
 exports[`renders day unchanged 1`] = `
 <div>
   <div
-    class="bg-slate-400 col-span-1 col-start-1 col-end-1 w-8"
+    class="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs"
     data-testid="hour-1"
   >
-    1
+    01:00
   </div>
 </div>
 `;

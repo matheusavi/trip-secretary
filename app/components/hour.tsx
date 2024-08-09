@@ -1,14 +1,19 @@
+import { useMemo } from "react";
+
 type HourProps = {
-  day: number;
+  hour: number;
 };
 
-export default function Hour({ day: hour }: HourProps) {
+export default function Hour({ hour: hour }: HourProps) {
+  const displayHour = useMemo(() => {
+    return hour.toString().padStart(2, "0") + ":00";
+  }, [hour]);
   return (
     <div
-      className="bg-slate-400 col-span-1 col-start-1 col-end-1 w-8"
+      className="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs"
       data-testid={"hour-" + hour}
     >
-      {hour}
+      {displayHour}
     </div>
   );
 }

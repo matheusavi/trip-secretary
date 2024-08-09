@@ -4,7 +4,7 @@ exports[`renders slot unchanged 1`] = `
 <div>
   <div
     aria-label="Slot 1"
-    class="z-10"
+    class="z-10 h-10"
     data-drop-target-for-element="true"
     data-testid="slot-1"
     style="grid-row: 1; grid-column: 2;"
