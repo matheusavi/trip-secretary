@@ -17,7 +17,7 @@ export default function Day() {
 
   return (
     <main className="flex flex-row w-full justify-center">
-      <div className="container bg-slate-600">
+      <div className="container bg-gray-200 h-full">
         <div className="flex flex-row flex-nowrap justify-between">
           <h1 className="flex-grow" data-testid="title">
             Trip to Monza
@@ -26,7 +26,7 @@ export default function Day() {
         </div>
         <div
           ref={animationParent}
-          className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1"
+          className="bg-white w-full h-full text-gray-300 grid grid-cols-[0.01fr_auto] gap-y-1"
         >
           {hours.map((_, i) => (
             <Hour key={i} day={hours[i]} />
