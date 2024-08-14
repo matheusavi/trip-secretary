@@ -90,7 +90,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
   return (
     <div
       ref={contentRef}
-      className="col-start-3 flex flex-col compromise-container text-gray-800 font-sans"
+      className="col-start-3 flex flex-col compromise-container text-gray-800 font-sans text-xs"
       style={{
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
@@ -104,12 +104,9 @@ export default function CompromiseContainer({ id }: { id: string }) {
         ref={ref}
         data-testid={"draggable-" + compromise.index}
       >
-        <Textarea
-          placeholder="Day plan"
-          className="grow-[12] w-1 bg-cyan-200"
-          value={compromise.plan}
-          onChange={handlePlanChange}
-        />
+        <div className="grow-[12] w-1 bg-cyan-200 line-clamp-2">
+          {compromise.plan}
+        </div>
         <NumericFormat
           placeholder="Costs"
           className="shrink grow-[1] w-1"

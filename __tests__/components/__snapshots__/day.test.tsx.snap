@@ -3,7 +3,7 @@
 exports[`renders day unchanged 1`] = `
 <div>
   <div
-    class="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs"
+    class="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs h-11"
     data-testid="hour-1"
   >
     01:00

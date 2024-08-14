@@ -10,7 +10,7 @@ export default function Hour({ hour: hour }: HourProps) {
   }, [hour]);
   return (
     <div
-      className="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs"
+      className="bg-white col-span-1 col-start-1 col-end-1 border-r-2 text-xs h-11"
       data-testid={"hour-" + hour}
     >
       {displayHour}
