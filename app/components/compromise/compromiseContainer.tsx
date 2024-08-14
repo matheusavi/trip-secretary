@@ -15,6 +15,7 @@ import {
 } from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
 import { XCircleIcon } from "@heroicons/react/24/solid";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef(null);
@@ -25,6 +26,9 @@ export default function CompromiseContainer({ id }: { id: string }) {
   const deleteAtom = useSetAtom(deleteCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
+  const [linesToShow, setLinesToShow] = useState(
+    getLinesToShow(compromise.size),
+  );
 
   useEffect(() => {
     const el = ref.current;
@@ -68,6 +72,14 @@ export default function CompromiseContainer({ id }: { id: string }) {
     });
   }, [dragging, compromise.id]);
 
+  useEffect(() => {
+    setLinesToShow(getLinesToShow(compromise.size));
+  }, [compromise.size]);
+
+  function getLinesToShow(size: number) {
+    return (size * 2 - 1).toString();
+  }
+
   function handleResolvedChange(checked: boolean): void {
     updateAtom({ id: id, update: { resolved: checked } });
   }
@@ -95,49 +107,55 @@ export default function CompromiseContainer({ id }: { id: string }) {
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
         zIndex: dragging ? 5 : 20,
+        height: `${2.75 * compromise.size}rem`,
       }}
       data-testid={"container-div-" + compromise.index}
     >
       <div
-        className="bg-cyan-200 p-1 space-x-1 flex flex-grow w-full"
+        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow"
         style={dragging ? { opacity: 0.4 } : {}}
         ref={ref}
         data-testid={"draggable-" + compromise.index}
       >
-        <div className="grow-[12] w-1 bg-cyan-200 line-clamp-2">
-          {compromise.plan}
+        <div className="flex-grow flex flex-col gap-y-0.5">
+          <div className="overflow-clip flex-grow">
+            <div className="">{compromise.plan + compromise.plan}</div>
+          </div>
+          <NumericFormat
+            placeholder="Costs"
+            className="shrink-0"
+            displayType="text"
+            value={compromise.costs}
+            onValueChange={handleCostsChanged}
+            prefix="$"
+          />
         </div>
-        <NumericFormat
-          placeholder="Costs"
-          className="shrink grow-[1] w-1"
-          value={compromise.costs}
-          onValueChange={handleCostsChanged}
-          prefix="$"
-        />
-        <Checkbox
-          checked={compromise.resolved}
-          className="group block size-4 rounded border bg-white data-[checked]:bg-blue-500"
-          data-testid="checkbox"
-          onChange={handleResolvedChange}
-        >
-          <svg
-            className="stroke-white opacity-0 group-data-[checked]:opacity-100"
-            viewBox="0 0 14 14"
-            fill="none"
+        <div className="flex-grow-0 flex-shrink-0">
+          <Checkbox
+            checked={compromise.resolved}
+            className="group block h-4 aspect-square rounded border bg-white data-[checked]:bg-blue-500"
+            data-testid="checkbox"
+            onChange={handleResolvedChange}
           >
-            <path
-              d="M3 8L6 11L11 3.5"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Checkbox>
-        <div
-          onClick={handleDeletePlan}
-          data-testid={"remove-" + compromise.index}
-        >
-          <XCircleIcon className="flex-shrink-0 h-5" />
+            <svg
+              className="stroke-white opacity-0 group-data-[checked]:opacity-100"
+              viewBox="0 0 14 14"
+              fill="none"
+            >
+              <path
+                d="M3 8L6 11L11 3.5"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Checkbox>
+          <div
+            onClick={handleDeletePlan}
+            data-testid={"remove-" + compromise.index}
+          >
+            <AdjustmentsHorizontalIcon className="flex-shrink-0 h-5" />
+          </div>
         </div>
       </div>
       <div
