@@ -14,7 +14,6 @@ import {
   modifyCompromiseAtom,
 } from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
-import { XCircleIcon } from "@heroicons/react/24/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 
 export default function CompromiseContainer({ id }: { id: string }) {
@@ -27,7 +26,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
   const deleteAtom = useSetAtom(deleteCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
-  const [linesToShow, setLinesToShow] = useState(getLinesToShow());
+  const [linesToShow, setLinesToShow] = useState("1");
 
   useEffect(() => {
     const el = ref.current;
@@ -94,21 +93,17 @@ export default function CompromiseContainer({ id }: { id: string }) {
     deleteAtom({ id: id });
   }
 
-  function getLinesToShow() {
+  function getLinesToShow(): string {
     const containerHeight = ref.current?.clientHeight;
-    let lineHeight = planRef.current
-      ?.computedStyleMap()
-      .get("line-height") as CSSUnitValue;
-    if (
-      typeof containerHeight !== "number" ||
-      typeof lineHeight?.value !== "number"
-    )
-      return;
+    if (!planRef.current) return "1";
 
-    let clamp = Math.floor(
-      (containerHeight - lineHeight.value) / lineHeight.value,
+    let lineHeight = parseInt(
+      window.getComputedStyle(planRef.current).getPropertyValue("line-height"),
     );
+    if (typeof containerHeight !== "number" || typeof lineHeight !== "number")
+      return "1";
 
+    let clamp = Math.floor((containerHeight - lineHeight) / lineHeight);
     return clamp + "";
   }
 
@@ -137,7 +132,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
           <div className="overflow-clip flex-grow">
             <div
               ref={planRef}
-              className="line-clamp-2 overflow-hidden"
+              className="overflow-hidden"
               style={
                 {
                   display: "-webkit-box",
