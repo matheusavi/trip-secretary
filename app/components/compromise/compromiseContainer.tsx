@@ -18,17 +18,16 @@ import { XCircleIcon } from "@heroicons/react/24/solid";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 
 export default function CompromiseContainer({ id }: { id: string }) {
-  const ref = useRef(null);
-  const dividerRef = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const dividerRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const planRef = useRef<HTMLDivElement | null>(null);
   const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
   const updateAtom = useSetAtom(modifyCompromiseAtom);
   const deleteAtom = useSetAtom(deleteCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
-  const [linesToShow, setLinesToShow] = useState(
-    getLinesToShow(compromise.size),
-  );
+  const [linesToShow, setLinesToShow] = useState(getLinesToShow());
 
   useEffect(() => {
     const el = ref.current;
@@ -73,12 +72,8 @@ export default function CompromiseContainer({ id }: { id: string }) {
   }, [dragging, compromise.id]);
 
   useEffect(() => {
-    setLinesToShow(getLinesToShow(compromise.size));
+    setLinesToShow(getLinesToShow());
   }, [compromise.size]);
-
-  function getLinesToShow(size: number) {
-    return (size * 2 - 1).toString();
-  }
 
   function handleResolvedChange(checked: boolean): void {
     updateAtom({ id: id, update: { resolved: checked } });
@@ -99,6 +94,24 @@ export default function CompromiseContainer({ id }: { id: string }) {
     deleteAtom({ id: id });
   }
 
+  function getLinesToShow() {
+    const containerHeight = ref.current?.clientHeight;
+    let lineHeight = planRef.current
+      ?.computedStyleMap()
+      .get("line-height") as CSSUnitValue;
+    if (
+      typeof containerHeight !== "number" ||
+      typeof lineHeight?.value !== "number"
+    )
+      return;
+
+    let clamp = Math.floor(
+      (containerHeight - lineHeight.value) / lineHeight.value,
+    );
+
+    return clamp + "";
+  }
+
   return (
     <div
       ref={contentRef}
@@ -112,14 +125,29 @@ export default function CompromiseContainer({ id }: { id: string }) {
       data-testid={"container-div-" + compromise.index}
     >
       <div
-        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow"
-        style={dragging ? { opacity: 0.4 } : {}}
+        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow-0"
+        style={{
+          opacity: dragging ? 0.4 : 1,
+          height: `${2.75 * compromise.size - 0.125}rem`,
+        }}
         ref={ref}
         data-testid={"draggable-" + compromise.index}
       >
-        <div className="flex-grow flex flex-col gap-y-0.5">
+        <div className="flex-grow flex-shrink flex flex-col">
           <div className="overflow-clip flex-grow">
-            <div className="">{compromise.plan + compromise.plan}</div>
+            <div
+              ref={planRef}
+              className="line-clamp-2 overflow-hidden"
+              style={
+                {
+                  display: "-webkit-box",
+                  "-webkit-box-orient": "vertical",
+                  "-webkit-line-clamp": linesToShow,
+                } as React.CSSProperties
+              }
+            >
+              {compromise.plan}
+            </div>
           </div>
           <NumericFormat
             placeholder="Costs"
@@ -153,14 +181,15 @@ export default function CompromiseContainer({ id }: { id: string }) {
           <div
             onClick={handleDeletePlan}
             data-testid={"remove-" + compromise.index}
+            className="flex-shrink-0"
           >
-            <AdjustmentsHorizontalIcon className="flex-shrink-0 h-5" />
+            <AdjustmentsHorizontalIcon className="h-5" />
           </div>
         </div>
       </div>
       <div
         ref={dividerRef}
-        className="h-0.5 w-full flex-grow-0 flex-shrink bg-gray-100 cursor-row-resize"
+        className="h-0.5 w-full flex-grow-0 flex-shrink-0 bg-gray-100 cursor-row-resize"
         data-testid={"resizer-" + compromise.index}
       ></div>
     </div>
