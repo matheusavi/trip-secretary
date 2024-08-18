@@ -5,6 +5,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import invariant from "tiny-invariant";
 import { createCompromiseAtom, dateAtom } from "./compromise/compromiseAtom";
+import { slotHeight } from "@/app/constants/constants";
 
 type SlotProps = {
   location: number;
@@ -32,8 +33,8 @@ export default function Slot({ location }: SlotProps) {
   return (
     <div
       ref={ref}
-      className="z-10 h-11"
-      style={{ gridRow: location, gridColumn: 2 }}
+      className="z-10"
+      style={{ gridRow: location, gridColumn: 2, height: `${slotHeight}rem` }}
       data-testid={"slot-" + location}
       onClick={handleCreateCompromise}
       aria-label={"Slot " + location}

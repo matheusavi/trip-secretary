@@ -9,7 +9,7 @@ import {
 import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
-import type { CalendarDate } from "@internationalized/date";
+import { CalendarDate } from "@internationalized/date";
 import { upsertCompromise } from "@/lib/server/appwrite";
 
 export const compromisesAtom = atom<Compromise[]>([]);
@@ -19,7 +19,7 @@ type ModifyCompromiseParameters = {
   update: Partial<Compromise>;
 };
 
-export const dateAtom = atom<CalendarDate>(today(getLocalTimeZone()));
+export const dateAtom = atom<CalendarDate>(new CalendarDate(2024, 8, 12));
 
 export const deleteCompromiseAtom = atom(
   null,

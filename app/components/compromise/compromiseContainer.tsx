@@ -15,7 +15,9 @@ import {
 } from "./compromiseAtom";
 import { NumberFormatValues, NumericFormat } from "react-number-format";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
+import { slotHeight } from "@/app/constants/constants";
 
+const resizerHeight = 0.125;
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const dividerRef = useRef<HTMLDivElement | null>(null);
@@ -70,10 +72,6 @@ export default function CompromiseContainer({ id }: { id: string }) {
     });
   }, [dragging, compromise.id]);
 
-  useEffect(() => {
-    setLinesToShow(getLinesToShow());
-  }, [compromise.size]);
-
   function handleResolvedChange(checked: boolean): void {
     updateAtom({ id: id, update: { resolved: checked } });
   }
@@ -92,6 +90,10 @@ export default function CompromiseContainer({ id }: { id: string }) {
   function handleDeletePlan(event: React.MouseEvent<HTMLElement>) {
     deleteAtom({ id: id });
   }
+
+  useEffect(() => {
+    setLinesToShow(getLinesToShow());
+  }, [compromise.size]);
 
   function getLinesToShow(): string {
     const containerHeight = ref.current?.clientHeight;
@@ -115,7 +117,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
         zIndex: dragging ? 5 : 20,
-        height: `${2.75 * compromise.size}rem`,
+        height: `${slotHeight * compromise.size}rem`,
       }}
       data-testid={"container-div-" + compromise.index}
     >
@@ -123,7 +125,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
         className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow-0"
         style={{
           opacity: dragging ? 0.4 : 1,
-          height: `${2.75 * compromise.size - 0.125}rem`,
+          height: `${slotHeight * compromise.size - 0.125}rem`,
         }}
         ref={ref}
         data-testid={"draggable-" + compromise.index}
@@ -184,7 +186,8 @@ export default function CompromiseContainer({ id }: { id: string }) {
       </div>
       <div
         ref={dividerRef}
-        className="h-0.5 w-full flex-grow-0 flex-shrink-0 bg-gray-100 cursor-row-resize"
+        className="w-full flex-grow-0 flex-shrink-0 bg-gray-100 cursor-row-resize"
+        style={{ height: resizerHeight }}
         data-testid={"resizer-" + compromise.index}
       ></div>
     </div>
