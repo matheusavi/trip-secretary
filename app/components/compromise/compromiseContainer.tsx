@@ -17,7 +17,6 @@ import { NumberFormatValues, NumericFormat } from "react-number-format";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 import { slotHeight } from "@/app/constants/constants";
 
-const resizerHeight = 0.125;
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const dividerRef = useRef<HTMLDivElement | null>(null);
@@ -112,7 +111,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
   return (
     <div
       ref={contentRef}
-      className="col-start-3 flex flex-col compromise-container text-gray-800 font-sans text-xs"
+      className="col-start-3 compromise-container text-gray-800 font-sans text-xs"
       style={{
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
@@ -122,10 +121,9 @@ export default function CompromiseContainer({ id }: { id: string }) {
       data-testid={"container-div-" + compromise.index}
     >
       <div
-        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow-0"
+        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow-0 h-full"
         style={{
           opacity: dragging ? 0.4 : 1,
-          height: `${slotHeight * compromise.size - 0.125}rem`,
         }}
         ref={ref}
         data-testid={"draggable-" + compromise.index}
@@ -186,8 +184,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
       </div>
       <div
         ref={dividerRef}
-        className="w-full flex-grow-0 flex-shrink-0 bg-gray-100 cursor-row-resize"
-        style={{ height: resizerHeight }}
+        className="w-full cursor-row-resize bottom-4 h-4 relative"
         data-testid={"resizer-" + compromise.index}
       ></div>
     </div>
