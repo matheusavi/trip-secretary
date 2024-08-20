@@ -39,11 +39,13 @@ export const modifyCompromiseAtom = atom(
 type CreateCompromiseParameters = {
   location: number;
   date: string;
+  plan: string;
+  costs: number;
 };
 
 export const createCompromiseAtom = atom(
   null,
-  (get, set, { location, date }: CreateCompromiseParameters) => {
+  (get, set, { location, date, plan, costs }: CreateCompromiseParameters) => {
     const compromises = get(compromisesAtom);
     if (isRangeAvailable(location, 1, compromises)) {
       let newCompromise = new Compromise();
@@ -51,6 +53,8 @@ export const createCompromiseAtom = atom(
       newCompromise.index = location;
       newCompromise.size = 1;
       newCompromise.date = date;
+      newCompromise.plan = plan;
+      newCompromise.costs = costs;
       set(compromisesAtom, [...compromises, newCompromise]);
     }
   },
@@ -93,7 +97,7 @@ function debounceById<T extends (...args: any[]) => any>(
   };
 }
 
-const debouncedUpsertCompromise = debounceById(upsertCompromise, 5000);
+const debouncedUpsertCompromise = debounceById(upsertCompromise, 1000);
 
 function modifyCompromise(
   id: string,

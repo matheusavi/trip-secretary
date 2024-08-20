@@ -1,12 +1,9 @@
 "use client";
 
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useAtomValue } from "jotai";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
-import { dateAtom } from "./compromise/compromiseAtom";
 import { slotHeight } from "@/app/constants/constants";
-import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +24,6 @@ type SlotProps = {
 
 export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
-  const date = useAtomValue(dateAtom);
 
   useEffect(() => {
     const el = ref.current;
@@ -37,15 +33,15 @@ export default function Slot({ location }: SlotProps) {
       element: el,
       getData: () => ({ location }),
     });
-  }, [location, date]);
+  }, [location]);
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <div
           ref={ref}
-          className="z-10"
+          className="z-10 border-gray-100 border-b"
           style={{
             gridRow: location,
             gridColumn: 2,
@@ -57,12 +53,9 @@ export default function Slot({ location }: SlotProps) {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
-          <DrawerDescription>
-            Make changes to your profile here. Click save when youre done.
-          </DrawerDescription>
+          <DrawerTitle>Create a plan</DrawerTitle>
         </DrawerHeader>
-        <CompromiseForm className="px-4" />
+        <CompromiseForm className="px-4" location={location} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

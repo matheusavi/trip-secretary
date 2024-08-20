@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, Textarea } from "@headlessui/react";
+import { Checkbox } from "@headlessui/react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";

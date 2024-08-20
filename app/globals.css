@@ -8,10 +8,6 @@
   }
 }
 
-.grid > * {
-  @apply border-gray-100 border-b;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;

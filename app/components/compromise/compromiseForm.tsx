@@ -1,22 +1,60 @@
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { NumericFormat } from "react-number-format";
+import { useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { createCompromiseAtom, dateAtom } from "./compromiseAtom";
+import { Input } from "@/components/ui/input";
+
+interface CompromiseFormProps extends React.ComponentProps<"form"> {
+  location: number;
+}
 
 export default function CompromiseForm({
   className,
-}: React.ComponentProps<"form">) {
+  location,
+}: CompromiseFormProps) {
+  const date = useAtomValue(dateAtom);
+
+  const [plan, setPlan] = useState("");
+  const [costs, setCosts] = useState(0);
+
+  const createCompromise = useSetAtom(createCompromiseAtom);
+  function handleCreateCompromise() {
+    createCompromise({
+      plan: plan,
+      costs: costs,
+      date: date.toString(),
+      location: location,
+    });
+  }
+
   return (
     <form className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
         <Label htmlFor="plan">Plan</Label>
-        <Input type="text" id="plan" />
+        <Textarea
+          name="plan"
+          placeholder="Put your plan details here"
+          value={plan}
+          onChange={(e) => setPlan(e.target.value)}
+        />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="cost">Cost</Label>
-        <Input id="cost" defaultValue="" />
+        <Label htmlFor="costs">Costs</Label>
+        <NumericFormat
+          name="costs"
+          value={costs}
+          onValueChange={(e) => setCosts(e.floatValue || 0)}
+          prefix="$"
+          customInput={Input}
+        />
       </div>
-      <Button type="submit">Save changes</Button>
+      <Button type="button" onClick={handleCreateCompromise}>
+        Save changes
+      </Button>
     </form>
   );
 }
