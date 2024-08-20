@@ -36,7 +36,7 @@ export default function CompromiseForm({
       <div className="grid gap-2">
         <Label htmlFor="plan">Plan</Label>
         <Textarea
-          name="plan"
+          id="plan"
           placeholder="Put your plan details here"
           value={plan}
           onChange={(e) => setPlan(e.target.value)}
@@ -45,7 +45,7 @@ export default function CompromiseForm({
       <div className="grid gap-2">
         <Label htmlFor="costs">Costs</Label>
         <NumericFormat
-          name="costs"
+          id="costs"
           value={costs}
           onValueChange={(e) => setCosts(e.floatValue || 0)}
           prefix="$"

@@ -10,12 +10,22 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { useMediaQuery } from "@/components/hooks/useMediaQuery";
+
 import CompromiseForm from "./compromise/compromiseForm";
 
 type SlotProps = {
@@ -36,6 +46,35 @@ export default function Slot({ location }: SlotProps) {
   }, [location]);
 
   const [open, setOpen] = useState(false);
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <div
+            ref={ref}
+            className="z-10 border-gray-100 border-b"
+            style={{
+              gridRow: location,
+              gridColumn: 2,
+              height: `${slotHeight}rem`,
+            }}
+            data-testid={"slot-" + location}
+            aria-label={"Slot " + location}
+          />
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create a plan</DialogTitle>
+          </DialogHeader>
+          <CompromiseForm className="px-4" location={location} />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
