@@ -35,6 +35,8 @@ type SlotProps = {
 export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
 
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   useEffect(() => {
     const el = ref.current;
     invariant(el);
@@ -43,11 +45,9 @@ export default function Slot({ location }: SlotProps) {
       element: el,
       getData: () => ({ location }),
     });
-  }, [location]);
+  }, [location, isDesktop]);
 
   const [open, setOpen] = useState(false);
-
-  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
     return (
