@@ -121,7 +121,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
       data-testid={"container-div-" + compromise.index}
     >
       <div
-        className="bg-cyan-200 pt-1 pl-1 pr-1 flex flex-grow-0 h-full"
+        className="bg-cyan-400 pt-1 pl-1 pr-1 flex flex-grow-0 h-full "
         style={{
           opacity: dragging ? 0.4 : 1,
         }}

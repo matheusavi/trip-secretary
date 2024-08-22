@@ -114,7 +114,7 @@ function modifyCompromise(
   );
   const compromiseToUpdate = updatedCompromises.find((x) => x.id == id);
   debouncedUpsertCompromise(id, compromiseToUpdate);
-  set(compromisesAtom, updatedCompromises);
+  set(compromisesAtom, updatedCompromises as Compromise[]);
 }
 
 function updateAtom(
