@@ -56,6 +56,10 @@ export const createCompromiseAtom = atom(
       newCompromise.plan = plan;
       newCompromise.costs = costs;
       set(compromisesAtom, [...compromises, newCompromise]);
+      debouncedUpsertCompromise(
+        newCompromise.id,
+        newCompromise.toPlainObject(),
+      );
     }
   },
 );

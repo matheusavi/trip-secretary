@@ -69,7 +69,11 @@ export default function Slot({ location }: SlotProps) {
           <DialogHeader>
             <DialogTitle>Create a plan</DialogTitle>
           </DialogHeader>
-          <CompromiseForm className="px-4" location={location} />
+          <CompromiseForm
+            className="px-4"
+            location={location}
+            setOpen={setOpen}
+          />
         </DialogContent>
       </Dialog>
     );
@@ -94,7 +98,11 @@ export default function Slot({ location }: SlotProps) {
         <DrawerHeader className="text-left">
           <DrawerTitle>Create a plan</DrawerTitle>
         </DrawerHeader>
-        <CompromiseForm className="px-4" location={location} />
+        <CompromiseForm
+          className="px-4"
+          location={location}
+          setOpen={setOpen}
+        />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

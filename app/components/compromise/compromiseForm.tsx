@@ -3,18 +3,20 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { NumericFormat } from "react-number-format";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { createCompromiseAtom, dateAtom } from "./compromiseAtom";
 import { Input } from "@/components/ui/input";
 
 interface CompromiseFormProps extends React.ComponentProps<"form"> {
   location: number;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function CompromiseForm({
   className,
   location,
+  setOpen,
 }: CompromiseFormProps) {
   const date = useAtomValue(dateAtom);
 
@@ -29,6 +31,7 @@ export default function CompromiseForm({
       date: date.toString(),
       location: location,
     });
+    setOpen(false);
   }
 
   return (
