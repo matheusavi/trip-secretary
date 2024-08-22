@@ -111,7 +111,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
   return (
     <div
       ref={contentRef}
-      className="col-start-3 compromise-container text-gray-800 font-sans text-xs"
+      className="bg-primary text-primary-foreground hover:bg-primary/90 col-start-3 compromise-container font-sans text-xs rounded-md p-1"
       style={{
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
@@ -121,7 +121,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
       data-testid={"container-div-" + compromise.index}
     >
       <div
-        className="bg-cyan-400 pt-1 pl-1 pr-1 flex flex-grow-0 h-full "
+        className="flex flex-grow-0 h-full"
         style={{
           opacity: dragging ? 0.4 : 1,
         }}
