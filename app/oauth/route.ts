@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const response = NextResponse.redirect(`${request.nextUrl.origin}/account`);
+  const response = NextResponse.redirect(`${request.nextUrl.origin}/`);
 
   cookies().set("my-custom-session", session.secret, {
     path: "/",

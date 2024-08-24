@@ -17,11 +17,8 @@ export default function Day() {
 
   return (
     <main className="flex flex-row w-full justify-center">
-      <div className="container h-full">
-        <div className="flex flex-row flex-nowrap justify-between">
-          <h1 className="flex-grow" data-testid="title">
-            Trip to Monza
-          </h1>
+      <div className="h-full max-w-screen-xl w-full">
+        <div className="flex flex-row flex-nowrap justify-end">
           <Date />
         </div>
         <div

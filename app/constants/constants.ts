@@ -1,1 +1,1 @@
-export const slotHeight = 2.75;
+export const slotHeight = 3.5;

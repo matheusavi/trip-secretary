@@ -4,7 +4,7 @@ import { signUpWithGoogle } from "@/lib/server/oauth";
 
 export default async function SignUpPage() {
   const user = await getLoggedInUser();
-  if (user) redirect("/account");
+  if (user) redirect("/");
 
   return (
     <>

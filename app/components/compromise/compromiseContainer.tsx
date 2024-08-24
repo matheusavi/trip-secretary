@@ -111,12 +111,12 @@ export default function CompromiseContainer({ id }: { id: string }) {
   return (
     <div
       ref={contentRef}
-      className="bg-primary text-primary-foreground hover:bg-primary/90 col-start-3 compromise-container font-sans text-xs rounded-md p-1"
+      className="col-start-3 bg-white text-primary compromise-container font-sans text-sm rounded-md border mb-0.5 p-1 border-slate-200 shadow-md mr-2"
       style={{
         gridRow: `${compromise.index} / span ${compromise.size}`,
         gridColumn: 2,
         zIndex: dragging ? 5 : 20,
-        height: `${slotHeight * compromise.size}rem`,
+        height: `${slotHeight * compromise.size - 0.25}rem`,
       }}
       data-testid={"container-div-" + compromise.index}
     >
@@ -154,29 +154,10 @@ export default function CompromiseContainer({ id }: { id: string }) {
           />
         </div>
         <div className="flex-grow-0 flex-shrink-0">
-          <Checkbox
-            checked={compromise.resolved}
-            className="group block h-4 aspect-square rounded border bg-white data-[checked]:bg-blue-500"
-            data-testid="checkbox"
-            onChange={handleResolvedChange}
-          >
-            <svg
-              className="stroke-white opacity-0 group-data-[checked]:opacity-100"
-              viewBox="0 0 14 14"
-              fill="none"
-            >
-              <path
-                d="M3 8L6 11L11 3.5"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Checkbox>
           <div
             onClick={handleDeletePlan}
             data-testid={"remove-" + compromise.index}
-            className="flex-shrink-0"
+            className="flex-shrink-0 m-0.5"
           >
             <AdjustmentsHorizontalIcon className="h-5" />
           </div>
