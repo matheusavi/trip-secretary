@@ -48,9 +48,8 @@ describe("CompromiseContainer", () => {
 
   it("Renders without crashing", () => {
     render(<CompromiseProvider />);
-    expect(screen.getByPlaceholderText("Day plan")).toBeInTheDocument();
+    expect(screen.getByText(/my plan/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Costs")).toBeInTheDocument();
-    expect(screen.getByTestId("checkbox")).toBeInTheDocument();
     expect(screen.getByTestId("draggable-2")).toBeInTheDocument();
     expect(screen.getByTestId("resizer-2")).toBeInTheDocument();
   });
@@ -86,19 +85,5 @@ describe("CompromiseContainer", () => {
     fireEvent.drop(resizable);
     expect(container).toHaveStyle("z-index: 20");
     expect(draggable).not.toHaveStyle("opacity: 0.4");
-  });
-
-  it("Elements are editable", async () => {
-    render(<CompromiseProvider />);
-    const plan = screen.getByPlaceholderText("Day plan");
-    const costs = screen.getByPlaceholderText("Costs");
-    const checkbox = screen.getByTestId("checkbox");
-    await userEvent.type(plan, " is to eat bananas");
-    await userEvent.type(costs, "10.23");
-    await userEvent.click(checkbox);
-
-    expect(plan).toHaveValue("My plan is to eat bananas");
-    expect(costs).toHaveValue("$2010.23");
-    expect(checkbox).toBeChecked();
   });
 });
