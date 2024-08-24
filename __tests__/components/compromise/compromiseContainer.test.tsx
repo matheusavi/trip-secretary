@@ -1,10 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import CompromiseContainer from "../../../app/components/compromise/compromiseContainer";
 import { useHydrateAtoms } from "jotai/utils";
 import { Compromise } from "@/app/components/compromise/compromise";
-import { Provider } from "jotai";
-import { ReactNode } from "react";
 import { compromisesAtom } from "@/app/components/compromise/compromiseAtom";
 
 describe("CompromiseContainer", () => {
@@ -16,34 +13,10 @@ describe("CompromiseContainer", () => {
   initialCompromise.resolved = false;
   initialCompromise.size = 2;
 
-  const HydrateAtoms = ({
-    initialValues,
-    children,
-  }: {
-    initialValues: [[typeof compromisesAtom, Compromise[]]];
-    children: ReactNode;
-  }) => {
-    useHydrateAtoms(initialValues);
-    return children;
-  };
-
-  const TestProvider = ({
-    initialValues,
-    children,
-  }: {
-    initialValues: [[typeof compromisesAtom, Compromise[]]];
-    children: ReactNode;
-  }) => (
-    <Provider>
-      <HydrateAtoms initialValues={initialValues}>{children}</HydrateAtoms>
-    </Provider>
-  );
   const CompromiseProvider = () => {
-    return (
-      <TestProvider initialValues={[[compromisesAtom, [initialCompromise]]]}>
-        <CompromiseContainer id={initialCompromise.id} />
-      </TestProvider>
-    );
+    useHydrateAtoms([[compromisesAtom, [initialCompromise]]]);
+
+    return <CompromiseContainer id={initialCompromise.id} />;
   };
 
   it("Renders without crashing", () => {
