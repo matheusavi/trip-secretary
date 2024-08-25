@@ -1,4 +1,4 @@
-import { Setter, atom, useAtomValue } from "jotai";
+import { Setter, atom } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -19,7 +19,7 @@ type ModifyCompromiseParameters = {
   update: Partial<Compromise>;
 };
 
-export const dateAtom = atom<CalendarDate>(new CalendarDate(2024, 8, 12));
+export const dateAtom = atom<CalendarDate>(today(getLocalTimeZone()));
 
 export const deleteCompromiseAtom = atom(
   null,
