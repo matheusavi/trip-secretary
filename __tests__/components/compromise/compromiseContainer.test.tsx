@@ -3,6 +3,7 @@ import CompromiseContainer from "../../../app/components/compromise/compromiseCo
 import { useHydrateAtoms } from "jotai/utils";
 import { Compromise } from "@/app/components/compromise/compromise";
 import { compromisesAtom } from "@/app/components/compromise/compromiseAtom";
+import { today, getLocalTimeZone } from "@internationalized/date";
 
 describe("CompromiseContainer", () => {
   const initialCompromise = new Compromise();
@@ -12,6 +13,7 @@ describe("CompromiseContainer", () => {
   initialCompromise.costs = 20;
   initialCompromise.resolved = false;
   initialCompromise.size = 2;
+  initialCompromise.date = today(getLocalTimeZone()).toString();
 
   const CompromiseProvider = () => {
     useHydrateAtoms([[compromisesAtom, [initialCompromise]]]);
