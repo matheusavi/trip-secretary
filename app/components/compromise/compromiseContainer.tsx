@@ -154,11 +154,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
           />
         </div>
         <div className="flex-grow-0 flex-shrink-0">
-          <div
-            onClick={handleDeletePlan}
-            data-testid={"remove-" + compromise.index}
-            className="flex-shrink-0 m-0.5"
-          >
+          <div onClick={handleDeletePlan} className="flex-shrink-0 m-0.5">
             <AdjustmentsHorizontalIcon className="h-5" />
           </div>
         </div>
