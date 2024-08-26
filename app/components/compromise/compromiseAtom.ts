@@ -1,4 +1,4 @@
-import { Setter, atom, useAtomValue } from "jotai";
+import { Setter, atom } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +9,7 @@ import {
 import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
-import type { CalendarDate } from "@internationalized/date";
+import { CalendarDate } from "@internationalized/date";
 import { upsertCompromise } from "@/lib/server/appwrite";
 
 export const compromisesAtom = atom<Compromise[]>([]);
@@ -39,11 +39,13 @@ export const modifyCompromiseAtom = atom(
 type CreateCompromiseParameters = {
   location: number;
   date: string;
+  plan: string;
+  costs: number;
 };
 
 export const createCompromiseAtom = atom(
   null,
-  (get, set, { location, date }: CreateCompromiseParameters) => {
+  (get, set, { location, date, plan, costs }: CreateCompromiseParameters) => {
     const compromises = get(compromisesAtom);
     if (isRangeAvailable(location, 1, compromises)) {
       let newCompromise = new Compromise();
@@ -51,7 +53,13 @@ export const createCompromiseAtom = atom(
       newCompromise.index = location;
       newCompromise.size = 1;
       newCompromise.date = date;
+      newCompromise.plan = plan;
+      newCompromise.costs = costs;
       set(compromisesAtom, [...compromises, newCompromise]);
+      debouncedUpsertCompromise(
+        newCompromise.id,
+        newCompromise.toPlainObject(),
+      );
     }
   },
 );
@@ -93,7 +101,7 @@ function debounceById<T extends (...args: any[]) => any>(
   };
 }
 
-const debouncedUpsertCompromise = debounceById(upsertCompromise, 5000);
+const debouncedUpsertCompromise = debounceById(upsertCompromise, 1000);
 
 function modifyCompromise(
   id: string,
@@ -106,7 +114,7 @@ function modifyCompromise(
   );
   const compromiseToUpdate = updatedCompromises.find((x) => x.id == id);
   debouncedUpsertCompromise(id, compromiseToUpdate);
-  set(compromisesAtom, updatedCompromises);
+  set(compromisesAtom, updatedCompromises as Compromise[]);
 }
 
 function updateAtom(

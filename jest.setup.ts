@@ -1,5 +1,10 @@
 import "@testing-library/jest-dom";
 import "@atlaskit/pragmatic-drag-and-drop-unit-testing/drag-event-polyfill";
+import "@atlaskit/pragmatic-drag-and-drop-unit-testing/dom-rect-polyfill";
+
+jest.mock("@/components/hooks/useMediaQuery", () => ({
+  useMediaQuery: jest.fn().mockResolvedValue(true),
+}));
 
 jest.mock("@/lib/server/appwrite", () => ({
   upsertCompromise: jest.fn().mockImplementation((...args) => {

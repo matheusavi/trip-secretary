@@ -17,19 +17,16 @@ export default function Day() {
 
   return (
     <main className="flex flex-row w-full justify-center">
-      <div className="container bg-slate-600">
-        <div className="flex flex-row flex-nowrap justify-between">
-          <h1 className="flex-grow" data-testid="title">
-            Trip to Monza
-          </h1>
+      <div className="h-full max-w-screen-xl w-full">
+        <div className="flex flex-row flex-nowrap justify-end">
           <Date />
         </div>
         <div
           ref={animationParent}
-          className="bg-black w-full h-full text-black grid grid-cols-[0.01fr_auto] gap-1"
+          className="w-full h-full text-gray-300 grid grid-row-[max_heigth_20px] grid-cols-[0.01fr_auto]"
         >
           {hours.map((_, i) => (
-            <Hour key={i} day={hours[i]} />
+            <Hour key={i} hour={hours[i]} />
           ))}
           {hours.map((_, i) => (
             <Slot key={"slot" + i} location={hours[i]} />

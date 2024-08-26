@@ -23,4 +23,14 @@ export class Compromise {
     instance.date = obj.date;
     return instance;
   }
+
+  toPlainObject(): Record<string, any> {
+    const plainObject: Record<string, any> = {};
+    for (const key in this) {
+      if (this.hasOwnProperty(key)) {
+        plainObject[key] = (this as any)[key];
+      }
+    }
+    return plainObject;
+  }
 }

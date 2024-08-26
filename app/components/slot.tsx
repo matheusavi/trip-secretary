@@ -1,10 +1,32 @@
 "use client";
 
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
-import { createCompromiseAtom, dateAtom } from "./compromise/compromiseAtom";
+import { slotHeight } from "@/app/constants/constants";
+
+import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { useMediaQuery } from "@/components/hooks/useMediaQuery";
+
+import CompromiseForm from "./compromise/compromiseForm";
 
 type SlotProps = {
   location: number;
@@ -12,7 +34,8 @@ type SlotProps = {
 
 export default function Slot({ location }: SlotProps) {
   const ref = useRef(null);
-  const date = useAtomValue(dateAtom);
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     const el = ref.current;
@@ -22,21 +45,70 @@ export default function Slot({ location }: SlotProps) {
       element: el,
       getData: () => ({ location }),
     });
-  }, [location, date]);
+  }, [location, isDesktop]);
 
-  const createCompromise = useSetAtom(createCompromiseAtom);
-  function handleCreateCompromise(event: React.MouseEvent<HTMLElement>) {
-    createCompromise({ location: location, date: date.toString() });
+  const [open, setOpen] = useState(false);
+
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <div
+            ref={ref}
+            className="z-10 border-gray-100 border-b"
+            style={{
+              gridRow: location,
+              gridColumn: 2,
+              height: `${slotHeight}rem`,
+            }}
+            data-testid={"slot-" + location}
+            aria-label={"Slot " + location}
+          />
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Create a plan</DialogTitle>
+          </DialogHeader>
+          <CompromiseForm
+            className="px-4"
+            location={location}
+            setOpen={setOpen}
+          />
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (
-    <div
-      ref={ref}
-      className="z-10"
-      style={{ gridRow: location, gridColumn: 2 }}
-      data-testid={"slot-" + location}
-      onClick={handleCreateCompromise}
-      aria-label={"Slot " + location}
-    />
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <div
+          ref={ref}
+          className="z-10 border-gray-100 border-b"
+          style={{
+            gridRow: location,
+            gridColumn: 2,
+            height: `${slotHeight}rem`,
+          }}
+          data-testid={"slot-" + location}
+          aria-label={"Slot " + location}
+        />
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader className="text-left">
+          <DrawerTitle>Create a plan</DrawerTitle>
+        </DrawerHeader>
+        <CompromiseForm
+          className="px-4"
+          location={location}
+          setOpen={setOpen}
+        />
+        <DrawerFooter className="pt-2">
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
