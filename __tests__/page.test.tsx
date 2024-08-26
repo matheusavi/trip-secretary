@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Page from "../app/components/day";
 import { Compromise } from "@/app/components/compromise/compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -40,13 +41,14 @@ jest.mock("@/lib/server/appwrite", () => ({
     console.log("getCompromisesForTheDate called with date:", date);
     return Promise.resolve([initialCompromise, initialCompromise2]);
   }),
+  upsertCompromise: jest.fn(),
 }));
 
 describe("Page", () => {
   it("Element is resizable", async () => {
     render(<Page />);
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 50));
 
     screen.logTestingPlaygroundURL(document.body);
 
@@ -83,7 +85,7 @@ describe("Page", () => {
   it("Element does not overlap when resizing", async () => {
     render(<Page />);
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 50));
 
     const draggable = screen.getByTestId("draggable-2");
     const container = screen.getByTestId("container-div-2");
@@ -115,7 +117,7 @@ describe("Page", () => {
   it("Element is draggable", async () => {
     render(<Page />);
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r) => setTimeout(r, 50));
 
     const draggable = screen.getByTestId("draggable-14");
 
@@ -143,6 +145,36 @@ describe("Page", () => {
       expect(screen.getByTestId("draggable-22")).not.toHaveStyle(
         "opacity: 0.4",
       );
+    });
+  });
+
+  it("Create element", async () => {
+    render(<Page />);
+
+    await new Promise((r) => setTimeout(r, 50));
+
+    const slot = screen.getByTestId("slot-16");
+
+    fireEvent.click(slot);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Save changes/i)).toBeInTheDocument();
+    });
+
+    const textArea = screen.getByRole("textbox", { name: /plan/i });
+    const textContent = "I want to eat bananas";
+    await userEvent.type(textArea, textContent);
+
+    const costsInput = screen.getByRole("textbox", { name: /costs/i });
+    await userEvent.type(costsInput, "25");
+
+    screen.logTestingPlaygroundURL(screen.getByTestId("form-16"));
+
+    fireEvent.click(screen.getByText(/Save changes/i));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("plan-16")).toHaveTextContent(textContent);
+      expect(screen.getByTestId("costs-16")).toHaveTextContent("$25");
     });
   });
 });

@@ -1,19 +1,14 @@
 "use client";
 
-import { Checkbox } from "@headlessui/react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
 import { ElementType } from "./compromise";
 import { useAtomValue, useSetAtom } from "jotai";
-import {
-  compromisesAtom,
-  deleteCompromiseAtom,
-  modifyCompromiseAtom,
-} from "./compromiseAtom";
-import { NumberFormatValues, NumericFormat } from "react-number-format";
+import { compromisesAtom, deleteCompromiseAtom } from "./compromiseAtom";
+import { NumericFormat } from "react-number-format";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 import { slotHeight } from "@/app/constants/constants";
 
@@ -23,7 +18,6 @@ export default function CompromiseContainer({ id }: { id: string }) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const planRef = useRef<HTMLDivElement | null>(null);
   const compromise = useAtomValue(compromisesAtom).find((x) => x.id == id);
-  const updateAtom = useSetAtom(modifyCompromiseAtom);
   const deleteAtom = useSetAtom(deleteCompromiseAtom);
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
@@ -70,21 +64,6 @@ export default function CompromiseContainer({ id }: { id: string }) {
       },
     });
   }, [dragging, compromise.id]);
-
-  function handleResolvedChange(checked: boolean): void {
-    updateAtom({ id: id, update: { resolved: checked } });
-  }
-
-  function handleCostsChanged(values: NumberFormatValues): void {
-    updateAtom({
-      id: id,
-      update: { costs: values.floatValue },
-    });
-  }
-
-  function handlePlanChange(event: ChangeEvent<HTMLTextAreaElement>): void {
-    updateAtom({ id: id, update: { plan: event.target.value } });
-  }
 
   function handleDeletePlan(event: React.MouseEvent<HTMLElement>) {
     deleteAtom({ id: id });
@@ -133,6 +112,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
             <div
               ref={planRef}
               className="overflow-hidden"
+              data-testid={"plan-" + compromise.index}
               style={
                 {
                   display: "-webkit-box",
@@ -149,8 +129,8 @@ export default function CompromiseContainer({ id }: { id: string }) {
             className="shrink-0"
             displayType="text"
             value={compromise.costs}
-            onValueChange={handleCostsChanged}
             prefix="$"
+            data-testid={"costs-" + compromise.index}
           />
         </div>
         <div className="flex-grow-0 flex-shrink-0">

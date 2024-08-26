@@ -35,12 +35,16 @@ export default function CompromiseForm({
   }
 
   return (
-    <form className={cn("grid items-start gap-4", className)}>
+    <form
+      className={cn("grid items-start gap-4", className)}
+      data-testid={"form-" + location}
+    >
       <div className="grid gap-2">
         <Label htmlFor="plan">Plan</Label>
         <Textarea
           id="plan"
           placeholder="Put your plan details here"
+          name="plan"
           value={plan}
           onChange={(e) => setPlan(e.target.value)}
         />
