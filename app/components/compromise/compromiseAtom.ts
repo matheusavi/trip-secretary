@@ -10,7 +10,10 @@ import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { CalendarDate } from "@internationalized/date";
-import { upsertCompromise } from "@/lib/server/appwrite";
+import { getCompromiseDb } from "@/lib/dbFactory";
+
+let database: ICompromiseStorage;
+getCompromiseDb().then((x) => (database = x));
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -101,7 +104,9 @@ function debounceById<T extends (...args: any[]) => any>(
   };
 }
 
-const debouncedUpsertCompromise = debounceById(upsertCompromise, 1000);
+const debouncedUpsertCompromise = debounceById(async (compromise) => {
+  await database!.upsertCompromise(compromise);
+}, 1000);
 
 function modifyCompromise(
   id: string,

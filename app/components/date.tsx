@@ -2,10 +2,11 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/16/solid";
 import DatePickerContainer from "./datepicker";
 import { useAtom, useSetAtom } from "jotai";
 import { compromisesAtom, dateAtom } from "./compromise/compromiseAtom";
-import { getCompromisesForTheDate } from "@/lib/server/appwrite";
 import { useEffect } from "react";
 import { Compromise } from "./compromise/compromise";
 import { Button } from "@/components/ui/button";
+
+import { getCompromiseDb } from "@/lib/dbFactory";
 
 export default function Date() {
   const [date, setDate] = useAtom(dateAtom);
@@ -13,8 +14,10 @@ export default function Date() {
   const setCompromises = useSetAtom(compromisesAtom);
 
   useEffect(() => {
-    getCompromisesForTheDate(date.toString()).then((res) => {
-      setCompromises(res.map((x) => Compromise.fromPlainObject(x)));
+    getCompromiseDb().then((database) => {
+      database.getCompromisesForTheDate(date.toString()).then((res) => {
+        setCompromises(res.map((x: any) => Compromise.fromPlainObject(x)));
+      });
     });
   }, [date, setCompromises]);
 
