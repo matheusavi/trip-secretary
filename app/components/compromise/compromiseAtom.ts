@@ -1,4 +1,4 @@
-import { Setter, atom } from "jotai";
+import { Setter, atom, createStore } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -10,10 +10,11 @@ import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { CalendarDate } from "@internationalized/date";
-import { getCompromiseDb } from "@/lib/dbFactory";
+import { CompromiseDbFactory } from "@/lib/dbFactory";
 
-let database: ICompromiseStorage;
-getCompromiseDb().then((x) => (database = x));
+export const userIsLoggedInAtom = atom<boolean>(false);
+
+const store = createStore();
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -105,7 +106,9 @@ function debounceById<T extends (...args: any[]) => any>(
 }
 
 const debouncedUpsertCompromise = debounceById(async (compromise) => {
-  await database!.upsertCompromise(compromise);
+  await CompromiseDbFactory.getCompromiseDb(
+    store.get(userIsLoggedInAtom),
+  ).upsertCompromise(compromise);
 }, 1000);
 
 function modifyCompromise(

@@ -1,11 +1,23 @@
-"use client";
-
-import { getLoggedInUser } from "@/lib/server/appwrite";
 import ServerCompromiseStorage from "./serverCompromiseStorage";
 import CompromiseIndexedDb from "./compromiseIndexedDb";
 
-export async function getCompromiseDb(): Promise<ICompromiseStorage> {
-  const user = await getLoggedInUser();
+class CompromiseDbFactory {
+  private static serverCompromiseStorage: ICompromiseStorage | null = null;
+  private static compromiseIndexedDb: ICompromiseStorage | null = null;
 
-  return user ? new ServerCompromiseStorage() : new CompromiseIndexedDb();
+  public static getCompromiseDb(userIsLoggedIn: boolean): ICompromiseStorage {
+    if (userIsLoggedIn) {
+      if (!this.serverCompromiseStorage) {
+        this.serverCompromiseStorage = new ServerCompromiseStorage();
+      }
+      return this.serverCompromiseStorage;
+    } else {
+      if (!this.compromiseIndexedDb) {
+        this.compromiseIndexedDb = new CompromiseIndexedDb();
+      }
+      return this.compromiseIndexedDb;
+    }
+  }
 }
+
+export { CompromiseDbFactory };
