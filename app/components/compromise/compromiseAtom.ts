@@ -1,4 +1,4 @@
-import { Setter, atom } from "jotai";
+import { Setter, atom, createStore } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -10,7 +10,9 @@ import invariant from "tiny-invariant";
 import { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { CalendarDate } from "@internationalized/date";
-import { upsertCompromise } from "@/lib/server/appwrite";
+import { CompromiseDbFactory } from "@/lib/dbFactory";
+
+export const userIsLoggedInAtom = atom<boolean>(false);
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
@@ -32,7 +34,13 @@ export const deleteCompromiseAtom = atom(
 export const modifyCompromiseAtom = atom(
   null,
   (get, set, { id, update }: ModifyCompromiseParameters) => {
-    modifyCompromise(id, update, get(compromisesAtom), set);
+    modifyCompromise(
+      id,
+      update,
+      get(compromisesAtom),
+      set,
+      get(userIsLoggedInAtom),
+    );
   },
 );
 
@@ -59,6 +67,7 @@ export const createCompromiseAtom = atom(
       debouncedUpsertCompromise(
         newCompromise.id,
         newCompromise.toPlainObject(),
+        get(userIsLoggedInAtom),
       );
     }
   },
@@ -101,19 +110,27 @@ function debounceById<T extends (...args: any[]) => any>(
   };
 }
 
-const debouncedUpsertCompromise = debounceById(upsertCompromise, 1000);
+const debouncedUpsertCompromise = debounceById(
+  async (compromise, userIsLoggedIn) => {
+    await CompromiseDbFactory.getCompromiseDb(userIsLoggedIn).upsertCompromise(
+      compromise,
+    );
+  },
+  1000,
+);
 
 function modifyCompromise(
   id: string,
   updatedCompromise: Partial<Compromise>,
   compromises: Compromise[],
   set: Setter,
+  userIsLoggedIn: boolean,
 ) {
   const updatedCompromises = compromises.map((compromise) =>
     compromise.id === id ? { ...compromise, ...updatedCompromise } : compromise,
   );
   const compromiseToUpdate = updatedCompromises.find((x) => x.id == id);
-  debouncedUpsertCompromise(id, compromiseToUpdate);
+  debouncedUpsertCompromise(id, compromiseToUpdate, userIsLoggedIn);
   set(compromisesAtom, updatedCompromises as Compromise[]);
 }
 
@@ -122,6 +139,7 @@ function updateAtom(
   location: DragLocationHistory,
   get: () => Compromise[],
   set: Setter,
+  userIsLoggedIn: boolean,
 ) {
   const destination = location.current.dropTargets[0];
   if (!destination) return;
@@ -153,6 +171,7 @@ function updateAtom(
         { index: destinationLocation },
         compromises,
         set,
+        userIsLoggedIn,
       );
       break;
     }
@@ -169,7 +188,13 @@ function updateAtom(
       )
         return;
 
-      modifyCompromise(sourceId, { size: newSize }, compromises, set);
+      modifyCompromise(
+        sourceId,
+        { size: newSize },
+        compromises,
+        set,
+        userIsLoggedIn,
+      );
       break;
     }
   }
@@ -178,10 +203,22 @@ function updateAtom(
 export const compromiseEffect = atomEffect((get, set) => {
   return monitorForElements({
     onDrag({ source, location }) {
-      updateAtom(source, location, () => get(compromisesAtom), set);
+      updateAtom(
+        source,
+        location,
+        () => get(compromisesAtom),
+        set,
+        get(userIsLoggedInAtom),
+      );
     },
     onDrop({ source, location }) {
-      updateAtom(source, location, () => get(compromisesAtom), set);
+      updateAtom(
+        source,
+        location,
+        () => get(compromisesAtom),
+        set,
+        get(userIsLoggedInAtom),
+      );
     },
   });
 });

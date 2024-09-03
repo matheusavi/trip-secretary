@@ -5,11 +5,19 @@ import Hour from "./hour";
 import Date from "./date";
 import CompromiseContainer from "./compromise/compromiseContainer";
 import { useAtom } from "jotai";
-import { compromiseEffect, compromisesAtom } from "./compromise/compromiseAtom";
+import {
+  compromiseEffect,
+  compromisesAtom,
+  userIsLoggedInAtom,
+} from "./compromise/compromiseAtom";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useHydrateAtoms } from "jotai/utils";
 
-export default function Day() {
+export default function Day({ userLoggedIn }: { userLoggedIn: boolean }) {
   const [animationParent] = useAutoAnimate();
+
+  useHydrateAtoms([[userIsLoggedInAtom, userLoggedIn]]);
+
   const hours = Array.from(Array(25).keys()).slice(1);
 
   const [compromises] = useAtom(compromisesAtom);

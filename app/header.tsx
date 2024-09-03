@@ -1,5 +1,4 @@
 import { ChevronDownIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import Image from "next/image";
 
 export default function Header() {
   return (

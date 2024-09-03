@@ -14,6 +14,10 @@ const config: Config = {
   clearMocks: true,
   collectCoverage: true,
   coverageDirectory: "coverage",
+  coveragePathIgnorePatterns: [
+    "<rootDir>/lib/compromiseIndexedDb.ts",
+    "<rootDir>/node_modules",
+  ],
   coverageProvider: "v8",
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],

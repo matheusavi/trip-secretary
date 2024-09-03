@@ -1,9 +1,10 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Page from "../app/components/day";
+import Day from "../app/components/day";
 import { Compromise } from "@/app/components/compromise/compromise";
 import { v4 as uuidv4 } from "uuid";
 import { today, getLocalTimeZone } from "@internationalized/date";
+import { Provider } from "jotai";
 
 beforeAll(() => {
   document.elementFromPoint = jest
@@ -44,17 +45,19 @@ jest.mock("@/lib/server/appwrite", () => ({
   upsertCompromise: jest.fn(),
 }));
 
+const DayProvider = () => (
+  <Provider>
+    <Day userLoggedIn={true} />
+  </Provider>
+);
+
 describe("Page", () => {
   it("Element is resizable", async () => {
-    render(<Page />);
+    render(<DayProvider />);
 
-    await new Promise((r) => setTimeout(r, 50));
-
-    screen.logTestingPlaygroundURL(document.body);
-
-    const container = screen.getByTestId("container-div-2");
-    const draggable = screen.getByTestId("draggable-2");
-    const resizable = screen.getByTestId("resizer-2");
+    const container = await screen.findByTestId("container-div-2");
+    const draggable = await screen.findByTestId("draggable-2");
+    const resizable = await screen.findByTestId("resizer-2");
 
     fireEvent.dragStart(resizable);
 
@@ -65,31 +68,31 @@ describe("Page", () => {
 
     fireEvent.dragEnter(document.body);
 
-    fireEvent.dragEnter(screen.getByTestId("slot-13"));
+    fireEvent.dragEnter(await screen.findByTestId("slot-13"));
 
-    fireEvent.dragOver(screen.getByTestId("slot-13"), {
+    fireEvent.dragOver(await screen.findByTestId("slot-13"), {
       clientX: 10,
       clientY: 0,
     });
 
     fireEvent.drop(resizable);
 
-    await waitFor(() => {
-      expect(screen.getByTestId("container-div-2")).toHaveStyle(
+    await waitFor(async () => {
+      expect(await screen.findByTestId("container-div-2")).toHaveStyle(
         "grid-row: 2 / span 12; grid-column: 2; z-index: 20;",
       );
-      expect(screen.getByTestId("draggable-2")).not.toHaveStyle("opacity: 0.4");
+      expect(await screen.findByTestId("draggable-2")).not.toHaveStyle(
+        "opacity: 0.4",
+      );
     });
   });
 
   it("Element does not overlap when resizing", async () => {
-    render(<Page />);
+    render(<DayProvider />);
 
-    await new Promise((r) => setTimeout(r, 50));
-
-    const draggable = screen.getByTestId("draggable-2");
-    const container = screen.getByTestId("container-div-2");
-    const resizable = screen.getByTestId("resizer-2");
+    const draggable = await screen.findByTestId("draggable-2");
+    const container = await screen.findByTestId("container-div-2");
+    const resizable = await screen.findByTestId("resizer-2");
 
     fireEvent.dragStart(resizable);
 
@@ -99,61 +102,59 @@ describe("Page", () => {
     });
 
     fireEvent.dragEnter(document.body);
-    fireEvent.dragEnter(screen.getByTestId("slot-20"));
+    fireEvent.dragEnter(await screen.findByTestId("slot-20"));
 
-    fireEvent.dragOver(screen.getByTestId("slot-20"), {
+    fireEvent.dragOver(await screen.findByTestId("slot-20"), {
       clientX: 0,
       clientY: 10,
     });
 
-    fireEvent.drop(screen.getByTestId("resizer-2"));
-    await waitFor(() => {
-      expect(screen.getByTestId("container-div-2")).toHaveStyle(
+    fireEvent.drop(await screen.findByTestId("resizer-2"));
+    await waitFor(async () => {
+      expect(await screen.findByTestId("container-div-2")).toHaveStyle(
         "grid-row: 2 / span 1; grid-column: 2; z-index: 20;",
       );
-      expect(screen.getByTestId("draggable-2")).not.toHaveStyle("opacity: 0.4");
+      expect(await screen.findByTestId("draggable-2")).not.toHaveStyle(
+        "opacity: 0.4",
+      );
     });
   });
   it("Element is draggable", async () => {
-    render(<Page />);
+    render(<DayProvider />);
 
-    await new Promise((r) => setTimeout(r, 50));
-
-    const draggable = screen.getByTestId("draggable-14");
+    const draggable = await screen.findByTestId("draggable-14");
 
     fireEvent.dragStart(draggable);
 
-    await waitFor(() => {
-      const container = screen.getByTestId("container-div-14");
+    await waitFor(async () => {
+      const container = await screen.findByTestId("container-div-14");
       expect(container).toHaveStyle("z-index: 5");
       expect(draggable).toHaveStyle("opacity: 0.4");
     });
 
     fireEvent.dragEnter(document.body);
-    fireEvent.dragEnter(screen.getByTestId("slot-22"));
+    fireEvent.dragEnter(await screen.findByTestId("slot-22"));
 
-    fireEvent.dragOver(screen.getByTestId("slot-22"), {
+    fireEvent.dragOver(await screen.findByTestId("slot-22"), {
       clientX: 0,
       clientY: 10,
     });
 
-    fireEvent.drop(screen.getByTestId("draggable-14"));
-    await waitFor(() => {
-      expect(screen.getByTestId("container-div-22")).toHaveStyle(
+    fireEvent.drop(await screen.findByTestId("draggable-14"));
+    await waitFor(async () => {
+      expect(await screen.findByTestId("container-div-22")).toHaveStyle(
         "grid-row: 22 / span 1; grid-column: 2; z-index: 20;",
       );
-      expect(screen.getByTestId("draggable-22")).not.toHaveStyle(
+      expect(await screen.findByTestId("draggable-22")).not.toHaveStyle(
         "opacity: 0.4",
       );
     });
   });
 
   it("Create element", async () => {
-    render(<Page />);
+    render(<DayProvider />);
 
-    await new Promise((r) => setTimeout(r, 50));
-
-    const slot = screen.getByTestId("slot-16");
+    const slot = await screen.findByTestId("slot-16");
 
     fireEvent.click(slot);
 
@@ -168,13 +169,13 @@ describe("Page", () => {
     const costsInput = screen.getByRole("textbox", { name: /costs/i });
     await userEvent.type(costsInput, "25");
 
-    screen.logTestingPlaygroundURL(screen.getByTestId("form-16"));
-
     fireEvent.click(screen.getByText(/Save changes/i));
 
-    await waitFor(() => {
-      expect(screen.getByTestId("plan-16")).toHaveTextContent(textContent);
-      expect(screen.getByTestId("costs-16")).toHaveTextContent("$25");
+    await waitFor(async () => {
+      expect(await screen.findByTestId("plan-16")).toHaveTextContent(
+        textContent,
+      );
+      expect(await screen.findByTestId("costs-16")).toHaveTextContent("$25");
     });
   });
 });
