@@ -38,6 +38,10 @@ jest.mock("@/lib/server/appwrite", () => ({
     console.log("getCompromisesForTheDate called with date:", date);
     return Promise.resolve([]);
   }),
+  deleteCompromise: jest.fn().mockImplementation((id) => {
+    console.log("deleteCompromise called with the id:", id);
+    return Promise.resolve([]);
+  }),
 }));
 beforeEach(() => {
   jest.clearAllMocks();
