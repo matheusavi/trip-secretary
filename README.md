@@ -29,11 +29,11 @@ I’ve already tested this during my recent trip to Europe, and it was a game-ch
 * [x] Oauth2 login through appwrite
 * [x] Store in IndexedDB when not logged in
 * [x] Mobile-friendly data drawer to add compromises
+* [x] Delete compromises
 
 ### 📝 To Do
 * [ ] Login/Logout through dropdown menu
 * [ ] Edit compromises
-* [ ] Delete compromises
 * [ ] See the whole compromise description
 * [ ] Make the resize clearer by adding an arrow to indicate the resizable area
 * [ ] Use react query to change dates (using cancellation token in case of rapid multiple changes)
@@ -45,6 +45,11 @@ I’ve already tested this during my recent trip to Europe, and it was a game-ch
 * [ ] Improve CSS animations
 * [ ] Exhibit total amount of costs per day
 * [ ] Get user's photo from Google Oauth2?
+* [ ] Create a DockerFile
+* [ ] Create a MakeFile
+* [ ] Add a retry routine for appwrite
+* [ ] Restrict user on appwrite to edit only his own registers
+* [ ] Add a delete confirmation option
 
 ## 🚀 How to Run it?
 
