@@ -74,7 +74,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
     });
   }, [dragging, compromise.id]);
 
-  function handleDeletePlan(event: React.MouseEvent<HTMLElement>) {
+  function handleDeletePlan() {
     deleteAtom({ id: id });
   }
 
@@ -144,14 +144,19 @@ export default function CompromiseContainer({ id }: { id: string }) {
         </div>
         <div className="flex-grow-0 flex-shrink-0">
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <AdjustmentsHorizontalIcon className="h-5" />
+            <DropdownMenuTrigger asChild>
+              <button aria-label={`Compromise ${compromise.index} actions`}>
+                <AdjustmentsHorizontalIcon className="h-5" />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Compromise actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDeletePlan}>
+              <DropdownMenuItem
+                aria-label={`Delete compromise ${compromise.index}`}
+                onClick={handleDeletePlan}
+              >
                 Delete
               </DropdownMenuItem>
               <DropdownMenuItem>Edit</DropdownMenuItem>

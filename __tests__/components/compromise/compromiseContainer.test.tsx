@@ -29,7 +29,7 @@ describe("CompromiseContainer", () => {
     expect(screen.getByTestId("resizer-2")).toBeInTheDocument();
   });
 
-  it("Element is draggable", async () => {
+  it("Element changes while dragging", async () => {
     render(<CompromiseProvider />);
     const draggable = screen.getByTestId("draggable-2");
     const container = screen.getByTestId("container-div-2");
@@ -45,7 +45,7 @@ describe("CompromiseContainer", () => {
     expect(draggable).not.toHaveStyle("opacity: 0.4");
   });
 
-  it("Element is resizable", async () => {
+  it("Element changes while resizing", async () => {
     render(<CompromiseProvider />);
     const resizable = screen.getByTestId("resizer-2");
     const draggable = screen.getByTestId("draggable-2");
