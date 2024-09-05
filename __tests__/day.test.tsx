@@ -43,6 +43,7 @@ jest.mock("@/lib/server/appwrite", () => ({
     return Promise.resolve([initialCompromise, initialCompromise2]);
   }),
   upsertCompromise: jest.fn(),
+  deleteCompromise: jest.fn(),
 }));
 
 const DayProvider = () => (
@@ -151,7 +152,7 @@ describe("Page", () => {
     });
   });
 
-  it("Create element", async () => {
+  it("Element is creatable", async () => {
     render(<DayProvider />);
 
     const slot = await screen.findByTestId("slot-16");
@@ -176,6 +177,28 @@ describe("Page", () => {
         textContent,
       );
       expect(await screen.findByTestId("costs-16")).toHaveTextContent("$25");
+    });
+  });
+
+  it("Element is deletable", async () => {
+    render(<DayProvider />);
+
+    const button = await screen.findByRole("button", {
+      name: /compromise 2 actions/i,
+    });
+
+    await userEvent.click(button);
+
+    const deleteButton = await screen.findByRole("menuitem", {
+      name: /delete compromise 2/i,
+    });
+
+    const container = await screen.findByTestId("container-div-2");
+
+    await userEvent.click(deleteButton);
+
+    await waitFor(async () => {
+      expect(container).not.toBeInTheDocument();
     });
   });
 });

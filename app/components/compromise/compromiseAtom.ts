@@ -28,6 +28,9 @@ export const deleteCompromiseAtom = atom(
   (get, set, { id }: { id: string }) => {
     const compromises = get(compromisesAtom).filter((x) => x.id !== id);
     set(compromisesAtom, compromises);
+    CompromiseDbFactory.getCompromiseDb(
+      get(userIsLoggedInAtom),
+    ).deleteCompromise(id);
   },
 );
 

@@ -6,8 +6,6 @@ import {
   Databases,
   Query,
   AppwriteException,
-  Permission,
-  Role,
 } from "node-appwrite";
 import { cookies } from "next/headers";
 
@@ -103,4 +101,28 @@ export async function upsertCompromise(obj: any) {
       );
     else console.error(ex);
   }
+}
+
+export async function deleteCompromise(id: string) {
+  const client = new Client()
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
+
+  const databases = new Databases(client);
+  const user = await getLoggedInUser();
+
+  const result = await databases.getDocument(
+    process.env.NEXT_APPWRITE_DATABASE,
+    process.env.NEXT_APPWRITE_COMPROMISES,
+    id,
+  );
+
+  if (result.user != user!.$id)
+    throw new Error("User trying to edit a register for another user");
+
+  await databases.deleteDocument(
+    process.env.NEXT_APPWRITE_DATABASE,
+    process.env.NEXT_APPWRITE_COMPROMISES,
+    id,
+  );
 }
