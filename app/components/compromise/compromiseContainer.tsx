@@ -12,6 +12,15 @@ import { NumericFormat } from "react-number-format";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 import { slotHeight } from "@/app/constants/constants";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 export default function CompromiseContainer({ id }: { id: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const dividerRef = useRef<HTMLDivElement | null>(null);
@@ -134,9 +143,20 @@ export default function CompromiseContainer({ id }: { id: string }) {
           />
         </div>
         <div className="flex-grow-0 flex-shrink-0">
-          <div onClick={handleDeletePlan} className="flex-shrink-0 m-0.5">
-            <AdjustmentsHorizontalIcon className="h-5" />
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <AdjustmentsHorizontalIcon className="h-5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Compromise actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeletePlan}>
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       <div

@@ -2,6 +2,7 @@
 
 export default class CompromiseIndexedDb implements ICompromiseStorage {
   storedDb: IDBDatabase | undefined = undefined;
+
   getDatabaseInstance(): Promise<IDBDatabase> {
     if (this.storedDb !== undefined) return Promise.resolve(this.storedDb);
 
@@ -48,6 +49,21 @@ export default class CompromiseIndexedDb implements ICompromiseStorage {
     const store = tx.objectStore("compromise");
 
     store.put(obj);
+
+    return new Promise((resolve) => {
+      tx.oncomplete = () => {
+        resolve();
+      };
+    });
+  }
+
+  async deleteCompromise(id: string): Promise<void> {
+    const db = await this.getDatabaseInstance();
+
+    const tx = db.transaction("compromise", "readwrite");
+    const store = tx.objectStore("compromise");
+
+    store.delete(id);
 
     return new Promise((resolve) => {
       tx.oncomplete = () => {
