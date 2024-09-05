@@ -56,14 +56,13 @@ I’ve already tested this during my recent trip to Europe, and it was a game-ch
 To run **Trip Secretary**, you’ll need the following:
 
 - A working installation of **[Node.js](https://nodejs.org/)**.
-- (Optional) **[Bun](https://bun.sh/)** installed for package management.
 
 
 Then, you can run the following commands on your terminal:
 
 ```bash
 # Install Dependencies:
-bun install # You can also use npm install
+npm install 
 
 # Start the Development Server:
 npm run dev
@@ -120,10 +119,6 @@ npm run test
   <tr>
     <td>💻 Testing</td>
     <td><a href="https://jestjs.io/">Jest</a>, <a href="https://github.com/features/actions">GitHub Actions</a></td>
-  </tr>
-  <tr>
-    <td>📦 Package Management</td>
-    <td><a href="https://bun.sh/">Bun</a></td>
   </tr>
   <tr>
     <td>🔧 Code Formatting</td>
