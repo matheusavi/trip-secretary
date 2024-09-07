@@ -50,6 +50,7 @@ I’ve already tested this during my recent trip to Europe, and it was a game-ch
 * [ ] Add a retry routine for appwrite
 * [ ] Restrict user on appwrite to edit only his own registers
 * [ ] Add a delete confirmation option
+* [ ] Add an erase my data option
 
 ## 🚀 How to Run it?
 

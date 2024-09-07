@@ -9,6 +9,7 @@ import {
   compromiseEffect,
   compromisesAtom,
   userIsLoggedInAtom,
+  userLoggedInEffect,
 } from "./compromise/compromiseAtom";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useHydrateAtoms } from "jotai/utils";
@@ -22,6 +23,8 @@ export default function Day({ userLoggedIn }: { userLoggedIn: boolean }) {
 
   const [compromises] = useAtom(compromisesAtom);
   useAtom(compromiseEffect);
+
+  useAtom(userLoggedInEffect);
 
   return (
     <main className="flex flex-row w-full justify-center">

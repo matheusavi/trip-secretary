@@ -1,7 +1,13 @@
-import { getLoggedInUser } from "@/lib/server/appwrite";
+import { getLoggedUserData } from "@/lib/server/appwrite";
 import Day from "./components/day";
+import Header from "./header";
 
 export default async function Home() {
-  const userLoggedIn = !!(await getLoggedInUser());
-  return <Day userLoggedIn={userLoggedIn} />;
+  const userLoggedIn = !!(await getLoggedUserData());
+  return (
+    <>
+      <Header />
+      <Day userLoggedIn={userLoggedIn} />
+    </>
+  );
 }
