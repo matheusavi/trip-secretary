@@ -30,15 +30,15 @@ I’ve already tested this during my recent trip to Europe, and it was a game-ch
 * [x] Store in IndexedDB when not logged in
 * [x] Mobile-friendly data drawer to add compromises
 * [x] Delete compromises
+* [x] Login/Logout through dropdown menu
+* [x] SSR initial data fetching (if the user is logged in)
 
 ### 📝 To Do
-* [ ] Login/Logout through dropdown menu
 * [ ] Edit compromises
 * [ ] See the whole compromise description
 * [ ] Make the resize clearer by adding an arrow to indicate the resizable area
 * [ ] Use react query to change dates (using cancellation token in case of rapid multiple changes)
 * [ ] Date on the route
-* [ ] SSR initial data fetching (if the user is logged in)
 * [ ] Improve the date picker visuals (maybe use shadcn Datepicker?)
 * [ ] Add loading feedback
 * [ ] Add creating an item feedback

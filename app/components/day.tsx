@@ -4,20 +4,47 @@ import Slot from "./slot";
 import Hour from "./hour";
 import Date from "./date";
 import CompromiseContainer from "./compromise/compromiseContainer";
-import { useAtom } from "jotai";
+import { useAtom, WritableAtom } from "jotai";
 import {
   compromiseEffect,
   compromisesAtom,
+  dateAtom,
   userIsLoggedInAtom,
   userLoggedInEffect,
 } from "./compromise/compromiseAtom";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useHydrateAtoms } from "jotai/utils";
+import { Compromise } from "./compromise/compromise";
+import { CalendarDate } from "@internationalized/date";
 
-export default function Day({ userLoggedIn }: { userLoggedIn: boolean }) {
+export type DayParameters = {
+  userLoggedIn: boolean;
+  compromisesFromServer: any;
+  date: any;
+};
+
+export default function Day({
+  userLoggedIn,
+  compromisesFromServer,
+  date,
+}: DayParameters) {
   const [animationParent] = useAutoAnimate();
 
-  useHydrateAtoms([[userIsLoggedInAtom, userLoggedIn]]);
+  let atomsToHidrate = new Map<
+    WritableAtom<unknown, never[], unknown>,
+    unknown
+  >([[userIsLoggedInAtom, userLoggedIn]]);
+
+  if (compromisesFromServer != null && compromisesFromServer.length > 0)
+    atomsToHidrate.set(compromisesAtom, compromisesFromServer!);
+
+  if (date != null && typeof date === "string") {
+    const [year, month, day] = date.split("-");
+    if (!!year && !!month && !!day)
+      atomsToHidrate.set(dateAtom, new CalendarDate(+year, +month, +day));
+  }
+
+  useHydrateAtoms(atomsToHidrate);
 
   const hours = Array.from(Array(25).keys()).slice(1);
 
