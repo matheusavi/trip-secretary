@@ -5,25 +5,18 @@ import { CompromiseDbFactory } from "@/lib/dbFactory";
 import { today, getLocalTimeZone } from "@internationalized/date";
 
 export default async function Home() {
-  const userLoggedIn = !!(await getLoggedUserData());
+  const userData = await getLoggedUserData();
   let date = null;
   let compromises = null;
-  if (userLoggedIn) {
+  if (userData) {
     date = today(getLocalTimeZone()).toString();
     compromises =
       await CompromiseDbFactory.getCompromiseDb(
-        userLoggedIn,
+        !!userData,
       ).getCompromisesForTheDate(date);
   }
 
   return (
-    <>
-      <Header />
-      <Day
-        userLoggedIn={userLoggedIn}
-        date={date}
-        compromisesFromServer={compromises}
-      />
-    </>
+    <Day userData={userData} date={date} compromisesFromServer={compromises} />
   );
 }

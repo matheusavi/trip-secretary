@@ -14,7 +14,8 @@ import { CompromiseDbFactory } from "@/lib/dbFactory";
 
 export const userIsLoggedInAtom = atom<boolean>(false);
 
-export const userLoggedInEffect = atomEffect((get, set) => {
+export const loadCompromiseFromDateAtom = atom(null, (get, set) => {
+  console.log("fetching..");
   const date = get(dateAtom);
   const userIsLoggedIn = get(userIsLoggedInAtom);
   CompromiseDbFactory.getCompromiseDb(userIsLoggedIn)

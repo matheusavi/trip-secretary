@@ -12,19 +12,20 @@ import { signUpWithGoogle } from "@/lib/server/oauth";
 
 import { ChevronDownIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useSetAtom } from "jotai";
-import { useRouter } from "next/navigation";
 import { startTransition } from "react";
-import { userIsLoggedInAtom } from "./compromise/compromiseAtom";
+import {
+  loadCompromiseFromDateAtom,
+  userIsLoggedInAtom,
+} from "./compromise/compromiseAtom";
 
 export default function UserManager({ userName }: { userName: string | null }) {
-  const router = useRouter();
   const setLoggedInAtom = useSetAtom(userIsLoggedInAtom);
-
+  const loadCompromises = useSetAtom(loadCompromiseFromDateAtom);
   function onClickLogOut(): void {
     startTransition(async () => {
       await logOutUser();
       setLoggedInAtom(false);
-      router.refresh();
+      loadCompromises();
     });
   }
   function onClickSignUp(): void {
