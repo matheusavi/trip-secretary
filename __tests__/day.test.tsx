@@ -17,28 +17,28 @@ afterEach(async () => {
   fireEvent.pointerMove(window);
 });
 
+const initialCompromise = new Compromise();
+
+initialCompromise.id = uuidv4();
+initialCompromise.index = 2;
+initialCompromise.plan = "My plan";
+initialCompromise.costs = 20;
+initialCompromise.resolved = false;
+initialCompromise.size = 1;
+initialCompromise.date = today(getLocalTimeZone()).toString();
+
+const initialCompromise2 = new Compromise();
+
+initialCompromise2.id = uuidv4();
+initialCompromise2.index = 14;
+initialCompromise2.plan = "My plan";
+initialCompromise2.costs = 20;
+initialCompromise2.resolved = false;
+initialCompromise2.size = 1;
+initialCompromise2.date = today(getLocalTimeZone()).toString();
+
 jest.mock("@/lib/server/appwrite", () => ({
   getCompromisesForTheDate: jest.fn().mockImplementation((date) => {
-    const initialCompromise = new Compromise();
-
-    initialCompromise.id = uuidv4();
-    initialCompromise.index = 2;
-    initialCompromise.plan = "My plan";
-    initialCompromise.costs = 20;
-    initialCompromise.resolved = false;
-    initialCompromise.size = 1;
-    initialCompromise.date = today(getLocalTimeZone()).toString();
-
-    const initialCompromise2 = new Compromise();
-
-    initialCompromise2.id = uuidv4();
-    initialCompromise2.index = 14;
-    initialCompromise2.plan = "My plan";
-    initialCompromise2.costs = 20;
-    initialCompromise2.resolved = false;
-    initialCompromise2.size = 1;
-    initialCompromise2.date = today(getLocalTimeZone()).toString();
-
     console.log("getCompromisesForTheDate called with date:", date);
     return Promise.resolve([initialCompromise, initialCompromise2]);
   }),
@@ -46,9 +46,17 @@ jest.mock("@/lib/server/appwrite", () => ({
   deleteCompromise: jest.fn(),
 }));
 
+jest.mock("@/lib/server/oauth", () => ({
+  signUpWithGoogle: jest.fn(),
+}));
+
 const DayProvider = () => (
   <Provider>
-    <Day userLoggedIn={true} />
+    <Day
+      userData={{ name: "Doe" }}
+      compromisesFromServer={[initialCompromise, initialCompromise2]}
+      date={null}
+    />
   </Provider>
 );
 

@@ -14,7 +14,12 @@ exports[`renders header unchanged 1`] = `
         Trip Secretary
       </h2>
       <div
+        aria-expanded="false"
+        aria-haspopup="menu"
         class="flex flex-row items-center cursor-pointer"
+        data-state="closed"
+        id="radix-:r0:"
+        type="button"
       >
         <svg
           aria-hidden="true"
