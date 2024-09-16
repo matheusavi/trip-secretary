@@ -1,6 +1,5 @@
 import { getLoggedUserData } from "@/lib/server/appwrite";
 import Day from "./components/day";
-import Header from "./header";
 import { CompromiseDbFactory } from "@/lib/dbFactory";
 import { today, getLocalTimeZone } from "@internationalized/date";
 

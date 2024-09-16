@@ -4,17 +4,19 @@ import Slot from "./slot";
 import Hour from "./hour";
 import Date from "./date";
 import CompromiseContainer from "./compromise/compromiseContainer";
-import { useAtom, WritableAtom } from "jotai";
+import { useAtom, useSetAtom, WritableAtom } from "jotai";
 import {
   compromiseEffect,
   compromisesAtom,
   dateAtom,
+  loadCompromiseFromDateAtom,
   userIsLoggedInAtom,
 } from "./compromise/compromiseAtom";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useHydrateAtoms } from "jotai/utils";
 import { CalendarDate } from "@internationalized/date";
 import Header from "../header";
+import { useEffect } from "react";
 
 export type DayParameters = {
   userData: any;
@@ -49,6 +51,14 @@ export default function Day({
 
   const [compromises] = useAtom(compromisesAtom);
   useAtom(compromiseEffect);
+
+  const loadCompromises = useSetAtom(loadCompromiseFromDateAtom);
+
+  useEffect(() => {
+    if (!userData) {
+      loadCompromises();
+    }
+  }, []);
 
   return (
     <>
