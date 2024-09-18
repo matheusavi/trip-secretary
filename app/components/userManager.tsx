@@ -37,7 +37,10 @@ export default function UserManager({ userName }: { userName: string | null }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex flex-row items-center cursor-pointer">
+        <div
+          className="flex flex-row items-center cursor-pointer"
+          data-testid="dropdown-menu-trigger"
+        >
           <UserCircleIcon
             className="h-10 flex-shrink-0 dark:drop-shadow-[0_0_0.3rem_#ffffff70]"
             aria-label="User profile"
