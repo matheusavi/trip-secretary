@@ -1,55 +1,10 @@
 "use server";
-import "server-only";
-import {
-  Client,
-  Account,
-  Databases,
-  Query,
-  AppwriteException,
-} from "node-appwrite";
+import { Client, Databases, Query, AppwriteException } from "node-appwrite";
 import { cookies } from "next/headers";
-
-export async function createSessionClient() {
-  const client = new Client();
-
-  client
-    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT);
-
-  const session = cookies().get("my-custom-session");
-
-  if (!session || !session.value) throw new Error("No session");
-
-  client.setSession(session.value);
-
-  return {
-    get account() {
-      return new Account(client);
-    },
-  };
-}
-
-export async function createAdminClient() {
-  const client = new Client()
-    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
-    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT)
-    .setKey(process.env.NEXT_APPWRITE_KEY);
-
-  return {
-    get account() {
-      return new Account(client);
-    },
-  };
-}
-
-export async function getLoggedInUser() {
-  try {
-    const { account } = await createSessionClient();
-    return await account.get();
-  } catch (error) {
-    return null;
-  }
-}
+import {
+  createSessionClient,
+  getLoggedInUser,
+} from "./serverOnlyAppwriteActions";
 
 export async function getCompromisesForTheDate(date: string) {
   const client = new Client()
@@ -125,4 +80,25 @@ export async function deleteCompromise(id: string) {
     process.env.NEXT_APPWRITE_COMPROMISES,
     id,
   );
+}
+
+export async function logOutUser() {
+  try {
+    const { account } = await createSessionClient();
+
+    cookies().delete("my-custom-session");
+    await account.deleteSession("current");
+  } catch (ex) {
+    console.error(ex);
+    throw new Error("It was not possible to log out");
+  }
+}
+
+export async function getLoggedUserData() {
+  const user = await getLoggedInUser();
+  if (!user) return null;
+
+  return {
+    name: user.name,
+  };
 }

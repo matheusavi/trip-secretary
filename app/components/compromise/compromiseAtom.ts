@@ -1,4 +1,4 @@
-import { Setter, atom, createStore } from "jotai";
+import { Setter, atom } from "jotai";
 import { atomEffect } from "jotai-effect";
 import { Compromise, ElementType } from "./compromise";
 import { v4 as uuidv4 } from "uuid";
@@ -13,6 +13,19 @@ import { CalendarDate } from "@internationalized/date";
 import { CompromiseDbFactory } from "@/lib/dbFactory";
 
 export const userIsLoggedInAtom = atom<boolean>(false);
+
+export const loadCompromiseFromDateAtom = atom(null, (get, set) => {
+  const date = get(dateAtom);
+  const userIsLoggedIn = get(userIsLoggedInAtom);
+  CompromiseDbFactory.getCompromiseDb(userIsLoggedIn)
+    .getCompromisesForTheDate(date.toString())
+    .then((res) => {
+      set(
+        compromisesAtom,
+        res.map((x: any) => Compromise.fromPlainObject(x)),
+      );
+    });
+});
 
 export const compromisesAtom = atom<Compromise[]>([]);
 
