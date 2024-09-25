@@ -18,6 +18,7 @@ exports[`renders header unchanged 1`] = `
         aria-haspopup="menu"
         class="flex flex-row items-center cursor-pointer"
         data-state="closed"
+        data-testid="dropdown-menu-trigger"
         id="radix-:r0:"
         type="button"
       >

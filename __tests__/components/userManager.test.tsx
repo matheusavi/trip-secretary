@@ -13,16 +13,16 @@ jest.mock("@/lib/server/oauth", () => ({
 }));
 
 jest.mock("@/lib/server/appwrite", () => ({
+  getCompromisesForTheDate: jest.fn().mockImplementation((date) => {
+    console.log("getCompromisesForTheDate called with date:", date);
+    return Promise.resolve([]);
+  }),
   logOutUser: jest.fn(),
 }));
 
-jest.mock("@/lib/dbFactory", () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      getCompromiseDb: () => new ServerCompromiseStorage(),
-    };
-  });
-});
+CompromiseDbFactory.getCompromiseDb = jest
+  .fn()
+  .mockImplementation(() => new ServerCompromiseStorage());
 
 describe("UserManager", () => {
   const UserManagerProvider = ({ userName }: { userName: string | null }) => {
@@ -78,7 +78,7 @@ describe("UserManager", () => {
     userEvent.click(await screen.findByText(/log out/i));
 
     await waitFor(() => {
-      expect(logOutUser()).toHaveBeenCalled();
+      expect(logOutUser).toHaveBeenCalled();
     });
   });
 });
