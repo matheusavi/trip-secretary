@@ -1,5 +1,6 @@
 import { Databases } from "node-appwrite";
 import { getCompromisesForTheDate } from "./appwrite";
+import { getLoggedInUser } from "./serverOnlyAppwriteActions";
 
 const mockDocuments = {
   documents: [
@@ -16,17 +17,25 @@ const mockDocuments = {
   total: 2,
 };
 
-jest.mock("@/lib/server/serverOnlyAppwriteActions", () => ({
-  getLoggedInUser: jest.fn().mockResolvedValue({ $id: "my-id" }),
-}));
-
 jest
   .spyOn(Databases.prototype, "listDocuments")
   .mockResolvedValue(mockDocuments);
+
+jest.mock("@/lib/server/serverOnlyAppwriteActions", () => ({
+  getLoggedInUser: jest
+    .fn()
+    .mockResolvedValueOnce({ $id: "my-id" })
+    .mockResolvedValueOnce(null),
+}));
 
 describe("getCompromisesForTheDate", () => {
   it("Should retrive compromises when passing a date", async () => {
     const result = await getCompromisesForTheDate("2022-22-22");
     expect(result).toBe(mockDocuments.documents);
+    expect(getLoggedInUser).toHaveBeenCalled();
+  });
+
+  it("Should throw error while trying to get compromises without being logged in", async () => {
+    await expect(getCompromisesForTheDate("2022-22-22")).rejects.toThrow();
   });
 });
