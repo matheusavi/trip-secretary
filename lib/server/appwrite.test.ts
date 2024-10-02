@@ -1,5 +1,9 @@
 import { AppwriteException, Databases } from "node-appwrite";
-import { getCompromisesForTheDate, upsertCompromise } from "./appwrite";
+import {
+  deleteCompromise,
+  getCompromisesForTheDate,
+  upsertCompromise,
+} from "./appwrite";
 import { getLoggedInUser } from "./serverOnlyAppwriteActions";
 
 const mockDocuments = {
@@ -91,5 +95,36 @@ describe("upsertCompromise", () => {
     expect(Databases.prototype.getDocument).toHaveBeenCalled();
     expect(Databases.prototype.updateDocument).not.toHaveBeenCalled();
     expect(Databases.prototype.createDocument).toHaveBeenCalled();
+  });
+});
+
+jest.spyOn(Databases.prototype, "deleteDocument").mockImplementation();
+
+describe("deleteCompromise", () => {
+  it("Should delete compromise if it exists", async () => {
+    jest
+      .spyOn(Databases.prototype, "getDocument")
+      .mockResolvedValue(mockDocuments.documents[0]);
+    getLoggedInUserMock.mockImplementation(() => user);
+    await deleteCompromise(mockDocuments.documents[0].id);
+    expect(Databases.prototype.getDocument).toHaveBeenCalled();
+    expect(Databases.prototype.deleteDocument).toHaveBeenCalled();
+  });
+
+  it("Should not delete compromise if the specified user is not the logged in user", async () => {
+    getLoggedInUserMock.mockImplementation(() => ({ $id: "another-user-id" }));
+    await expect(
+      deleteCompromise(mockDocuments.documents[0].id),
+    ).rejects.toThrow(/another user/);
+  });
+
+  it("Should throw error if the compromise does not exists", async () => {
+    jest.spyOn(Databases.prototype, "getDocument").mockImplementation(() => {
+      throw new AppwriteException("", 404);
+    });
+
+    await expect(
+      deleteCompromise(mockDocuments.documents[0].id),
+    ).rejects.toThrow();
   });
 });
