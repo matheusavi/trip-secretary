@@ -34,11 +34,14 @@ export async function upsertCompromise(obj: any) {
 
   obj.user = user!.$id;
   try {
-    await databases.getDocument(
+    const result = await databases.getDocument(
       process.env.NEXT_APPWRITE_DATABASE,
       process.env.NEXT_APPWRITE_COMPROMISES,
       obj.id,
     );
+
+    if (result.user != user!.$id)
+      throw new Error("User trying to edit a register for another user");
 
     await databases.updateDocument(
       process.env.NEXT_APPWRITE_DATABASE,
@@ -54,7 +57,7 @@ export async function upsertCompromise(obj: any) {
         obj.id,
         obj,
       );
-    else console.error(ex);
+    else throw ex;
   }
 }
 

@@ -38,4 +38,11 @@ const config: Config = {
   },
 };
 
-export default createJestConfig(config);
+async function jestConfig() {
+  const nextJsConfig = await createJestConfig(config)();
+  nextJsConfig!.transformIgnorePatterns![0] =
+    "/node_modules/(?!node-appwrite)/";
+  return nextJsConfig;
+}
+
+export default jestConfig;
