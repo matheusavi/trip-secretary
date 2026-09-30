@@ -86,7 +86,7 @@ export async function logOutUser() {
   try {
     const { account } = await createSessionClient();
 
-    cookies().delete("my-custom-session");
+    (await cookies()).delete("my-custom-session");
     await account.deleteSession("current");
   } catch (ex) {
     console.error(ex);

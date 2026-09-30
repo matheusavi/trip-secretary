@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
   const response = NextResponse.redirect(`${request.nextUrl.origin}/`);
 
-  cookies().set("my-custom-session", session.secret, {
+  (await cookies()).set("my-custom-session", session.secret, {
     path: "/",
     httpOnly: true,
     sameSite: "lax",

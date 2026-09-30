@@ -19,7 +19,7 @@ exports[`renders header unchanged 1`] = `
         class="flex flex-row items-center cursor-pointer"
         data-state="closed"
         data-testid="dropdown-menu-trigger"
-        id="radix-:r0:"
+        id="radix-_r_0_"
         type="button"
       >
         <svg

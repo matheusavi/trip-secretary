@@ -3,7 +3,6 @@
 exports[`renders slot unchanged 1`] = `
 <div>
   <div
-    aria-controls="radix-:r0:"
     aria-expanded="false"
     aria-haspopup="dialog"
     aria-label="Slot 1"

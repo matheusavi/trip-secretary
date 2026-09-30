@@ -11,7 +11,8 @@ import { CalendarDate } from "@internationalized/date";
 export default function Date() {
   const [date, setDate] = useAtom(dateAtom);
   const loadCompromises = useSetAtom(loadCompromiseFromDateAtom);
-  function onChangeDate(value: CalendarDate) {
+  function onChangeDate(value: CalendarDate | null) {
+    if (!value) return;
     setDate(value);
     loadCompromises();
   }
