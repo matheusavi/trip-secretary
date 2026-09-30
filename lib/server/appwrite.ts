@@ -6,6 +6,13 @@ import {
   getLoggedInUser,
 } from "./serverOnlyAppwriteActions";
 
+class UnauthorizedCompromiseAccessError extends Error {
+  constructor() {
+    super("User trying to edit a register for another user");
+    this.name = "UnauthorizedCompromiseAccessError";
+  }
+}
+
 export async function getCompromisesForTheDate(date: string) {
   const client = new Client()
     .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
@@ -34,11 +41,14 @@ export async function upsertCompromise(obj: any) {
 
   obj.user = user!.$id;
   try {
-    await databases.getDocument(
+    const existing = await databases.getDocument(
       process.env.NEXT_APPWRITE_DATABASE,
       process.env.NEXT_APPWRITE_COMPROMISES,
       obj.id,
     );
+
+    if (existing.user != user!.$id)
+      throw new UnauthorizedCompromiseAccessError();
 
     await databases.updateDocument(
       process.env.NEXT_APPWRITE_DATABASE,
@@ -47,6 +57,7 @@ export async function upsertCompromise(obj: any) {
       obj,
     );
   } catch (ex) {
+    if (ex instanceof UnauthorizedCompromiseAccessError) throw ex;
     if (ex instanceof AppwriteException && ex.code == 404)
       await databases.createDocument(
         process.env.NEXT_APPWRITE_DATABASE,
@@ -72,8 +83,7 @@ export async function deleteCompromise(id: string) {
     id,
   );
 
-  if (result.user != user!.$id)
-    throw new Error("User trying to edit a register for another user");
+  if (result.user != user!.$id) throw new UnauthorizedCompromiseAccessError();
 
   await databases.deleteDocument(
     process.env.NEXT_APPWRITE_DATABASE,
