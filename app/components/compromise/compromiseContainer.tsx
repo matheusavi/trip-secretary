@@ -11,6 +11,7 @@ import { compromisesAtom, deleteCompromiseAtom } from "./compromiseAtom";
 import { NumericFormat } from "react-number-format";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/16/solid";
 import { slotHeight } from "@/app/constants/constants";
+import CompromiseDialog, { CompromiseDialogMode } from "./compromiseDialog";
 
 import {
   DropdownMenu,
@@ -31,6 +32,12 @@ export default function CompromiseContainer({ id }: { id: string }) {
   invariant(compromise);
   const [dragging, setDragging] = useState(false);
   const [linesToShow, setLinesToShow] = useState("1");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState<CompromiseDialogMode>("view");
+  // While the actions menu or the view/edit dialog is open, the compromise
+  // must not start a drag (e.g. a small mouse move after pressing the trigger).
+  const actionsOpen = menuOpen || dialogOpen;
 
   useEffect(() => {
     const el = ref.current;
@@ -50,8 +57,9 @@ export default function CompromiseContainer({ id }: { id: string }) {
         preventUnhandled.stop();
       },
       getInitialData: () => ({ id: compromise.id, type: ElementType.Data }),
+      canDrag: () => !actionsOpen,
     });
-  }, [dragging, compromise.id]);
+  }, [dragging, compromise.id, actionsOpen]);
 
   useEffect(() => {
     const divider = dividerRef.current;
@@ -60,6 +68,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
     return draggable({
       element: divider,
       getInitialData: () => ({ id: compromise.id, type: ElementType.Resizer }),
+      canDrag: () => !actionsOpen,
       onGenerateDragPreview: ({ nativeSetDragImage }) => {
         disableNativeDragPreview({ nativeSetDragImage });
         preventUnhandled.start();
@@ -72,10 +81,15 @@ export default function CompromiseContainer({ id }: { id: string }) {
         setDragging(false);
       },
     });
-  }, [dragging, compromise.id]);
+  }, [dragging, compromise.id, actionsOpen]);
 
   function handleDeletePlan() {
     deleteAtom({ id: id });
+  }
+
+  function openDialog(mode: CompromiseDialogMode) {
+    setDialogMode(mode);
+    setDialogOpen(true);
   }
 
   useEffect(() => {
@@ -143,7 +157,7 @@ export default function CompromiseContainer({ id }: { id: string }) {
           />
         </div>
         <div className="flex-grow-0 flex-shrink-0">
-          <DropdownMenu>
+          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <DropdownMenuTrigger asChild>
               <button aria-label={`Compromise ${compromise.index} actions`}>
                 <AdjustmentsHorizontalIcon className="h-5" />
@@ -152,14 +166,24 @@ export default function CompromiseContainer({ id }: { id: string }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Compromise actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>View</DropdownMenuItem>
+              <DropdownMenuItem
+                aria-label={`View compromise ${compromise.index}`}
+                onSelect={() => openDialog("view")}
+              >
+                View
+              </DropdownMenuItem>
               <DropdownMenuItem
                 aria-label={`Delete compromise ${compromise.index}`}
                 onClick={handleDeletePlan}
               >
                 Delete
               </DropdownMenuItem>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem
+                aria-label={`Edit compromise ${compromise.index}`}
+                onSelect={() => openDialog("edit")}
+              >
+                Edit
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -169,6 +193,12 @@ export default function CompromiseContainer({ id }: { id: string }) {
         className="w-full cursor-row-resize bottom-4 h-4 relative"
         data-testid={"resizer-" + compromise.index}
       ></div>
+      <CompromiseDialog
+        compromise={compromise}
+        mode={dialogMode}
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+      />
     </div>
   );
 }
