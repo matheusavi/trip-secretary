@@ -2,6 +2,9 @@
   "name": "trip-secretary",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
